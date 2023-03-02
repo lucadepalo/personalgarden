@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".LoginActivity">
 
 
     <LinearLayout
@@ -16,42 +16,11 @@
 
         <EditText
             android:id="@+id/editTextUsername"
-            style="@android:style/Widget.DeviceDefault.AutoCompleteTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:hint="Username"
-            android:inputType="text"
-            android:minHeight="48dp" />
-
-        <EditText
-            android:id="@+id/editTextEmail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:minHeight="48dp" />
-
-        <EditText
-            android:id="@+id/editTextNome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Nome"
-            android:inputType="text"
-            android:minHeight="48dp" />
-
-        <EditText
-            android:id="@+id/editTextCognome"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Cognome"
             android:inputType="text"
             android:minHeight="48dp" />
 
@@ -67,23 +36,24 @@
             android:minHeight="48dp" />
 
         <Button
-            android:id="@+id/buttonRegister"
-            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/buttonLogin"
+            style="@android:style/Widget.Material.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="CREA ACCOUNT" />
+            android:text="Login" />
 
         <TextView
-            android:id="@+id/textViewLogin"
+            android:id="@+id/textViewRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Sei già registrato? Accedi qui"
+            android:text="Non hai un account? Registrati"
             android:textAlignment="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
     </LinearLayout>
 
     <ProgressBar
@@ -93,5 +63,4 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:visibility="gone" />
-
 </RelativeLayout>
