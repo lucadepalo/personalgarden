@@ -109,9 +109,9 @@ public class LoginActivity extends AppCompatActivity {
                         //storing the user in shared preferences
                         SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        //starting the profile activity
+                        //starting the main2 activity
                         finish();
-                        startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                        startActivity(new Intent(getApplicationContext(), MainActivity2.class));
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid username or password", Toast.LENGTH_SHORT).show();
                     }
