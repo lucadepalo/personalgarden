@@ -1,36 +1,24 @@
 package com.lucadepalo.smartirrigator;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
-
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-
-
-
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener{
-    Button scanBtn, scanSUT, scanAIRR;
-    TextView messageText, idSUT, idAIRR /*, messageFormat*/;
+public class scanActivitySUT extends AppCompatActivity implements View.OnClickListener{
+    Button scanBtn;
+    TextView messageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_scan_sut);
 
         // referencing and initializing
         // the button and textviews
@@ -48,8 +36,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // of IntentIntegrator class
         // which is the class of QR library
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
-        intentIntegrator.setPrompt("Scan a barcode or QR Code");
+        intentIntegrator.setPrompt("Inquadra il codice QR del sensore");
         intentIntegrator.setOrientationLocked(false);
+        //this ensures that the user can scan only qr codes
+        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
         intentIntegrator.initiateScan();
     }
 
@@ -61,7 +51,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         // toast a message as "cancelled"
         if (intentResult != null) {
             if (intentResult.getContents() == null) {
-                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Operazione annullata", Toast.LENGTH_SHORT).show();
             } else {
                 // if the intentResult is not null we'll set
                 // the content and format of scan message
@@ -72,6 +62,4 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-
 }

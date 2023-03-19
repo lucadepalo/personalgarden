@@ -19,7 +19,6 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     EditText editTextUsername, editTextEmail, editTextPassword, editTextNome, editTextCognome;
-    //RadioGroup radioGroupGender;
 
 
     @Override
@@ -27,10 +26,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if the user is already logged in we will directly start the home activity
+        //if the user is already logged in we will directly start the qr airr scan activity
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             finish();
-            startActivity(new Intent(this, HomeActivity.class));
+            startActivity(new Intent(this, scanActivityAIRR.class));
             return;
         }
 
@@ -39,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         editTextNome = (EditText) findViewById(R.id.editTextNome);
         editTextCognome = (EditText) findViewById(R.id.editTextCognome);
-        //radioGroupGender = (RadioGroup) findViewById(R.id.radioGender);
 
 
         findViewById(R.id.buttonRegister).setOnClickListener(new View.OnClickListener() {
@@ -71,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         final String nome = editTextNome.getText().toString().trim();
         final String cognome = editTextCognome.getText().toString().trim();
 
-        //final String gender = ((RadioButton) findViewById(radioGroupGender.getCheckedRadioButtonId())).getText().toString();
 
         //first we will do the validations
 
@@ -130,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 params.put("nome", nome);
                 params.put("cognome", cognome);
 
-                //returing the response
+                //returning the response
                 return requestHandler.sendPostRequest(URLs.URL_REGISTER, params);
             }
 
@@ -171,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
                         //storing the user in shared preferences
                         SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        //starting the home activity
+                        //starting the qr airr scan activity
                         finish();
-                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                        startActivity(new Intent(getApplicationContext(), scanActivityAIRR.class));
                     } else {
                         Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
                     }
