@@ -20,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     EditText editTextUsername, editTextEmail, editTextPassword, editTextNome, editTextCognome;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         //if the user is already logged in we will directly start the qr airr scan activity
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             finish();
-            startActivity(new Intent(this, scanActivityAIRR.class));
+            startActivity(new Intent(this, QRcodeActivity.class));
             return;
         }
 
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                         //starting the qr airr scan activity
                         finish();
-                        startActivity(new Intent(getApplicationContext(), scanActivityAIRR.class));
+                        startActivity(new Intent(getApplicationContext(), QRcodeActivity.class));
                     } else {
                         Toast.makeText(getApplicationContext(), "Some error occurred", Toast.LENGTH_SHORT).show();
                     }

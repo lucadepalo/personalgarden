@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:text="ID sensore umidità (SUT):" />
-
+        android:text="ID rilevato:" />
 
     <Button
         android:id="@+id/scanBtn"
@@ -24,6 +23,6 @@
         android:layout_margin="10dp"
         android:backgroundTint="#0F9D58"
         android:layout_gravity="center"
-        android:text="Inquadra il codice QR"/>
+        android:text="Inquadra QR"/>
 
 </LinearLayout>

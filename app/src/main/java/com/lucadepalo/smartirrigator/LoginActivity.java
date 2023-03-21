@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         //starting the qr airr scan activity
                         finish();
-                        startActivity(new Intent(getApplicationContext(), scanActivityAIRR.class));
+                        startActivity(new Intent(getApplicationContext(), QRcodeActivity.class));
                     } else {
                         Toast.makeText(getApplicationContext(), "Invalid username or password", Toast.LENGTH_SHORT).show();
                     }

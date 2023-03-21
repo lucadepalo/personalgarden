@@ -16,15 +16,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".scanActivityAIRR"
+            android:name=".QRcodeActivity"
             android:exported="false" />
-        <activity
-            android:name=".scanActivitySUT"
-            android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false" />
-        <activity android:name=".ProfileActivity" />
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".MainActivity"
