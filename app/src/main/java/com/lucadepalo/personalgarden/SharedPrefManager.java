@@ -1,4 +1,4 @@
-package com.lucadepalo.smartirrigator;
+package com.lucadepalo.personalgarden;
 
 import android.content.Context;
 import android.content.Intent;

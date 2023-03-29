@@ -1,4 +1,4 @@
-package com.lucadepalo.smartirrigator;
+package com.lucadepalo.personalgarden;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,15 +7,11 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
