@@ -1,4 +1,4 @@
-package com.lucadepalo.smartirrigator;
+package com.lucadepalo.personalgarden;
 
 import static org.junit.Assert.assertEquals;
 
