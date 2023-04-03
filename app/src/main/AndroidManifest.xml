@@ -16,11 +16,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.lucadepalo.personalgarden.QRcodeActivity"
+            android:name=".DragDropActivity"
             android:exported="false" />
-        <activity android:name="com.lucadepalo.personalgarden.LoginActivity" />
         <activity
-            android:name="com.lucadepalo.personalgarden.MainActivity"
+            android:name=".QRcodeActivity"
+            android:exported="false" />
+        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

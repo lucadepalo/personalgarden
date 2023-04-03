@@ -52,14 +52,12 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        // if the intentResult is null then
-        // toast a message as "cancelled"
+        // if the intentResult is null then toast a message as "cancelled"
         if (intentResult != null) {
             if (intentResult.getContents() == null) {
                 Toast.makeText(getBaseContext(), "Operazione annullata", Toast.LENGTH_SHORT).show();
             } else {
-                // if the intentResult is not null we'll set
-                // the content and format of scan message
+                // if the intentResult is not null this sets the content and format of scan message
                 messageText.setText(intentResult.getContents());
                 temp = messageText.getText().toString().trim();
                 // if the SUT qr code hasn't already been scanned AND if the code scanned starts with SUT
@@ -72,12 +70,9 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
                 if(!qrSUT.isEmpty()&&!qrAIRR.isEmpty()){
                     registerCodes();
                     //this calls the next activity that needs to run after everything's done in this
-                    //startActivity(new Intent(getApplicationContext(), NextActivity.class));
+                    startActivity(new Intent(getApplicationContext(), DragDropActivity.class));
                     finish();
-                } /*else {
-                    Toast.makeText(getBaseContext(), "Ripetere le scansioni!", Toast.LENGTH_LONG).show();
-                    qrSUT = ""; qrAIRR = ""; temp = "";
-                }*/
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -87,7 +82,6 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     private void registerCodes(){
         final String SUT = qrSUT;
         final String AIRR = qrAIRR;
-
 
         class RegisterCodes extends AsyncTask<Void, Void, String> {
 
