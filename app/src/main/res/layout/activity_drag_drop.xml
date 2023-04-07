@@ -1,9 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_drag_drop"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DragDropActivity">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/irrigation_line"
+        android:layout_width="64dp"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/plant_pot_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+
+    <ImageView
+        android:id="@+id/plant_pot_icon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_pot"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/irrigation_line" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

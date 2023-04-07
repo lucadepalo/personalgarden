@@ -2,7 +2,7 @@ package com.lucadepalo.personalgarden;
 
 public class URLs {
 
-    private static final String ROOT_URL = "http://172.29.7.21/Api.php?apicall=";
+    private static final String ROOT_URL = "http://172.29.33.195/Api.php?apicall=";
 
     //private static final String ROOT_URL = "http://192.168.1.149/Api.php?apicall=";
 

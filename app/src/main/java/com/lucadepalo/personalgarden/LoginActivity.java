@@ -56,13 +56,13 @@ public class LoginActivity extends AppCompatActivity {
 
         //validating inputs
         if (TextUtils.isEmpty(username)) {
-            editTextUsername.setError("Please enter your username");
+            editTextUsername.setError("Per favore inserisci il tuo username");
             editTextUsername.requestFocus();
             return;
         }
 
         if (TextUtils.isEmpty(password)) {
-            editTextPassword.setError("Please enter your password");
+            editTextPassword.setError("Per favore inserisci la tua password");
             editTextPassword.requestFocus();
             return;
         }
@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                         startActivity(new Intent(getApplicationContext(), QRcodeActivity.class));
                     } else {
-                        Toast.makeText(getApplicationContext(), "Invalid username or password", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Username o password non validi", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

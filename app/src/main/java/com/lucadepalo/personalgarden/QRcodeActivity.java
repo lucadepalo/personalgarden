@@ -25,6 +25,12 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
 
+        if (SharedPrefManager.getInstance(this).isCoupled()) {
+            finish();
+            startActivity(new Intent(this, DragDropActivity.class));
+            return;
+        }
+
         // referencing and initializing
         // the button and textviews
         scanBtn = findViewById(R.id.scanBtn);
@@ -91,6 +97,7 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
                 HashMap<String, String> params = new HashMap<>();
                 params.put("qrSUT", SUT);
                 params.put("qrAIRR", AIRR);
+
                 return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
             }
             @Override
@@ -100,6 +107,8 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                Node node = new Node(AIRR, SUT);
+                SharedPrefManager.getInstance(getApplicationContext()).qrRegistration(node);
             }
         }
         RegisterCodes rc = new RegisterCodes();
