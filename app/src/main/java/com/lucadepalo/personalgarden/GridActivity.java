@@ -84,12 +84,6 @@ public class GridActivity extends AppCompatActivity {
     }
     // Listener for touch events on the ImageView
     private static final class MyTouchListener implements View.OnTouchListener {
-
-        private int initialX;
-        private int initialY;
-        private float initialTouchX;
-        private float initialTouchY;
-
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -100,13 +94,6 @@ public class GridActivity extends AppCompatActivity {
                 view.startDragAndDrop(data, shadowBuilder, view, 0);
                 // Make the ImageView invisible during the drag
                 view.setVisibility(View.INVISIBLE);
-
-                // Store the initial position and touch coordinates
-                initialX = (int) view.getX();
-                initialY = (int) view.getY();
-                initialTouchX = motionEvent.getRawX();
-                initialTouchY = motionEvent.getRawY();
-
                 return true;
             } else {
                 return false;
@@ -116,51 +103,55 @@ public class GridActivity extends AppCompatActivity {
 
     // Listener for drag and drop events
     private class MyDragListener implements View.OnDragListener {
+        boolean droppedOnValidCell = false;
+
         @Override
         public boolean onDrag(View v, DragEvent event) {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
-// Initialize the drag and drop state
+                    droppedOnValidCell = false;
                     break;
+
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    // The ImageView has entered the cell, change the background color
                     v.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
                     break;
 
                 case DragEvent.ACTION_DRAG_EXITED:
-                    // The ImageView has left the cell, restore the background color
                     v.setBackground(null);
                     break;
 
                 case DragEvent.ACTION_DROP:
-                    // The ImageView has been dropped into the cell
-                    // Get the view being dragged and the target view
+                    droppedOnValidCell = true;
                     View draggedView = (View) event.getLocalState();
                     FrameLayout targetView = (FrameLayout) v;
 
-                    // Set the target view's image to the dropped image
                     Drawable drawable = ((ImageView) draggedView).getDrawable();
                     if (drawable != null) {
                         ImageView droppedImage = new ImageView(getApplicationContext());
                         droppedImage.setImageDrawable(drawable);
                         targetView.addView(droppedImage);
+                        droppedImage.setOnTouchListener(new MyTouchListener());
                     }
 
-// Make the dragged view visible again
-                    draggedView.setVisibility(View.VISIBLE);
+                    if (draggedView != plantIcon) {
+                        ViewGroup oldParent = (ViewGroup) draggedView.getParent();
+                        oldParent.removeView(draggedView);
+                    }
                     break;
-
 
                 case DragEvent.ACTION_DRAG_ENDED:
-                    // Restore the background color of the cell
                     v.setBackgroundColor(android.graphics.Color.TRANSPARENT);
-                    //v.setBackgroundResource(R.drawable.border);
-                    View view1 = (View) event.getLocalState();
-                    if (!event.getResult()) {
-                        // The ImageView has been dropped outside the grid, reset its visibility
-                        view1.setVisibility(View.VISIBLE);
+                    View view = (View) event.getLocalState();
+                    if (!droppedOnValidCell && view != plantIcon) {
+                        ViewGroup parent = (ViewGroup) view.getParent();
+                        if (parent != null) {
+                            parent.removeView(view);
+                        }
+                    } else {
+                        view.setVisibility(View.VISIBLE);
                     }
                     break;
+
                 default:
                     break;
             }
