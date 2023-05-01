@@ -27,7 +27,7 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
 
         if (SharedPrefManager.getInstance(this).isCoupled()) {
             finish();
-            startActivity(new Intent(this, DragDropActivity.class));
+            startActivity(new Intent(this, GridActivity.class));
             return;
         }
 
@@ -76,7 +76,7 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
                 if(!qrSUT.isEmpty()&&!qrAIRR.isEmpty()){
                     registerCodes();
                     //this calls the next activity that needs to run after everything's done in this
-                    startActivity(new Intent(getApplicationContext(), DragDropActivity.class));
+                    startActivity(new Intent(getApplicationContext(), GridActivity.class));
                     finish();
                 }
             }

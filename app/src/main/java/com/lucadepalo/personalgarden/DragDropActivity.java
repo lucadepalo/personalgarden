@@ -2,14 +2,21 @@ package com.lucadepalo.personalgarden;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.graphics.RectF;
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class DragDropActivity extends AppCompatActivity {
+
+    private FrameLayout objectsContainer;
 
     private int numPotsAdded = 0;
     private float dX, dY; // variables to store the initial touch coordinates
@@ -19,11 +26,12 @@ public class DragDropActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drag_drop);
 
-        // Find the LinearLayout container for the irrigation line
-        LinearLayout irrigationLine = findViewById(R.id.irrigation_line);
-
+        GridView irrigationLine = findViewById(R.id.irrigation_line);
         // Find the ImageView for the plant pot icon
         ImageView plantPot = findViewById(R.id.plant_pot_icon);
+
+        objectsContainer = findViewById(R.id.objects_container);
+
 
         // Set the OnTouchListener to the ImageView so it can be dragged and dropped
         plantPot.setOnTouchListener(new View.OnTouchListener() {
@@ -34,6 +42,11 @@ public class DragDropActivity extends AppCompatActivity {
                         // User started dragging the icon
                         dX = v.getX() - event.getRawX();
                         dY = v.getY() - event.getRawY();
+                        ClipData dragData = ClipData.newPlainText("", "");
+                        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(v);
+                        v.startDrag(dragData, shadowBuilder, v, 0);
+                        // Nasconde l'icona originale
+                        v.setVisibility(View.INVISIBLE);
                         break;
                     case MotionEvent.ACTION_MOVE:
                         // User is moving the icon
@@ -54,7 +67,12 @@ public class DragDropActivity extends AppCompatActivity {
                             ));
 
                             // Add the new plant pot to the irrigation line
-                            irrigationLine.addView(newPlantPot);
+                            if (isViewOverlapping(newPlantPot, irrigationLine)) {
+                                objectsContainer.removeView(v);
+                                irrigationLine.addView(newPlantPot);
+                            } else {
+                                objectsContainer.addView(v);
+                            }
 
                             // Increment the number of pots added
                             numPotsAdded++;
@@ -67,7 +85,10 @@ public class DragDropActivity extends AppCompatActivity {
                                     return true;
                                 }
                             });
+                        } else {
+                            objectsContainer.addView(v);
                         }
+                        v.setVisibility(View.VISIBLE);
                         break;
                     case MotionEvent.ACTION_CANCEL:
                         // User dropped the icon outside of the intended drop zone, return it to original position
@@ -76,6 +97,34 @@ public class DragDropActivity extends AppCompatActivity {
                                 .y(dY)
                                 .setDuration(200)
                                 .start();
+                        v.setVisibility(View.VISIBLE);
+                        break;
+                }
+                return true;
+            }
+
+            private boolean isViewOverlapping(View firstView, View secondView) {
+                RectF firstRect = new RectF(firstView.getLeft(), firstView.getTop(), firstView.getRight(), firstView.getBottom());
+                RectF secondRect = new RectF(secondView.getLeft(), secondView.getTop(), secondView.getRight(), secondView.getBottom());
+                return RectF.intersects(firstRect, secondRect);
+            }
+        });
+
+        irrigationLine.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                switch (event.getAction()) {
+                    case DragEvent.ACTION_DROP:
+                        break;
+                    case DragEvent.ACTION_DRAG_STARTED:
+                        break;
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        break;
+                    case DragEvent.ACTION_DRAG_ENTERED:
+                        break;
+                    case DragEvent.ACTION_DRAG_EXITED:
+                        break;
+                    case DragEvent.ACTION_DRAG_LOCATION:
                         break;
                 }
                 return true;
