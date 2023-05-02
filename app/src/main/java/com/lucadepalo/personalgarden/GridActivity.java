@@ -48,24 +48,6 @@ public class GridActivity extends AppCompatActivity {
             cell.setOnDragListener(new MyDragListener());
         }
 
-/*        // Aggiunge il listener per il drag and drop alla cella di origine
-        cells[0].setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                switch (event.getAction()) {
-                    case DragEvent.ACTION_DROP:
-                        // La ImageView è stata rilasciata nella cella di origine, reimposta la visibilità
-                        View view = (View) event.getLocalState();
-                        view.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        break;
-                }
-                return true;
-            }
-        });
- */
-
         // Aggiunge il listener per il click su ogni cella
         for (FrameLayout cell : cells) {
             cell.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +57,7 @@ public class GridActivity extends AppCompatActivity {
                     FrameLayout clickedCell = (FrameLayout) v;
                     if (clickedCell.getChildCount() == 0) {
                         ImageView plant = new ImageView(getApplicationContext());
-                        plant.setImageDrawable(getResources().getDrawable(R.drawable.cloud_toggle));
+                        plant.setImageDrawable(getResources().getDrawable(R.drawable.ic_pot));
                         clickedCell.addView(plant);
                     }
                 }
