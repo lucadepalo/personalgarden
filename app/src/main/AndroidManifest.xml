@@ -19,12 +19,6 @@
             android:name=".GridActivity"
             android:exported="false" />
         <activity
-            android:name=".TrialActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DragDropActivity"
-            android:exported="false" />
-        <activity
             android:name=".QRcodeActivity"
             android:exported="false" />
         <activity
