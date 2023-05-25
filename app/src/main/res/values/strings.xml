@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Personal Garden</string>
+
+    <string name="hello">Hello World, DraggableGridViewSampleActivity!</string>
+    <string name="button1Text">Add Word</string>
+    <string name="button2Text">View Poem</string>
 </resources>

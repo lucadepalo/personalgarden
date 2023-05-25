@@ -11,8 +11,10 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="Inquadra i codici QR che trovi nella confezione, uno alla volta:"
+        android:layout_marginTop="20dp"
+        android:elegantTextHeight="true"
+        android:lineHeight="20dp"
+        android:text="Nella confezione troverai due codici QR, uno per il sensore di umidità e uno per il relè attuatore. Premi il tasto INQUADRA QR qui sotto, si aprirà la fotocamera e potrai inquadrare uno dei due codici QR che hai trovato. Se la registrazione del codice è andata a buon fine, tornerai a questa schermata, dove potrai inquadrare il secondo codice rimasto e completare la configurazione."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scanBtn" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

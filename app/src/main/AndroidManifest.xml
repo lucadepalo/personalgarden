@@ -16,12 +16,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".DragDropActivity"
+            android:name=".GridActivity"
             android:exported="false" />
         <activity
             android:name=".QRcodeActivity"
             android:exported="false" />
-        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

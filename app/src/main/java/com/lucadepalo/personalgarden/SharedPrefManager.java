@@ -17,6 +17,8 @@ public class SharedPrefManager {
 
     private static final String KEY_ID = "keyid";
 
+    private static final String KEY_AIRR = "keyairr";
+    private static final String KEY_SUT = "keysut";
     private static SharedPrefManager mInstance;
     private static Context mCtx;
 
@@ -44,10 +46,27 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    public void qrRegistration(Node node) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(KEY_AIRR, node.getAirr());
+        editor.putString(KEY_SUT, node.getSut());
+        editor.apply();
+    }
+
     //this method will checker whether user is already logged in or not
     public boolean isLoggedIn() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USERNAME, null) != null;
+    }
+
+    public boolean isCoupled() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        if ((sharedPreferences.getString(KEY_AIRR, null) != null) && (sharedPreferences.getString(KEY_SUT, null) != null)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     //this method will give the logged in user
