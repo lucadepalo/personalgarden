@@ -16,6 +16,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".setCropActivity"
+            android:exported="false" />
+        <activity
             android:name=".GridActivity"
             android:exported="false" />
         <activity

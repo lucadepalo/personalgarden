@@ -21,7 +21,7 @@ public class GridActivity extends AppCompatActivity {
     private ImageView trashIcon;
     private GridLayout gridLayout;
     private FrameLayout[] cells = new FrameLayout[8];
-    private HashMap<String, String> cellPotMap = new HashMap<>();
+    private HashMap<String, String> irrigationLine = new HashMap<>();
     private int plantNumber = 0;
 
     @Override
@@ -81,11 +81,9 @@ public class GridActivity extends AppCompatActivity {
                             parent.removeView(view);
 
                             // Remove the association from the HashMap
-                            cellPotMap.remove(parent.getTag().toString());
+                            irrigationLine.remove(parent.getTag().toString());
                         }
                         break;
-
-
 
                     case DragEvent.ACTION_DRAG_ENDED:
                         v.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Change color back to normal when drag is completed
@@ -97,7 +95,6 @@ public class GridActivity extends AppCompatActivity {
                 return true;
             }
         });
-
 
         // Add drag and drop logic to each cell
         for (FrameLayout cell : cells) {
@@ -121,7 +118,7 @@ public class GridActivity extends AppCompatActivity {
                         clickedCell.addView(plant);
 
                         // Add the new association to the HashMap
-                        cellPotMap.put(clickedCell.getTag().toString(), newPotTag);
+                        irrigationLine.put(clickedCell.getTag().toString(), newPotTag);
                     }
                 }
             });
@@ -179,7 +176,7 @@ public class GridActivity extends AppCompatActivity {
                         droppedImage.setOnTouchListener(new MyTouchListener());
 
                         // Add the new association to the HashMap
-                        cellPotMap.put(targetView.getTag().toString(), droppedImage.getTag().toString());
+                        irrigationLine.put(targetView.getTag().toString(), droppedImage.getTag().toString());
                     }
 
                     // Ensure that the draggedView is not the original plantIcon
@@ -188,7 +185,7 @@ public class GridActivity extends AppCompatActivity {
                         oldParent.removeView(draggedView);
 
                         // Remove the old association from the HashMap
-                        cellPotMap.remove(oldParent.getTag().toString());
+                        irrigationLine.remove(oldParent.getTag().toString());
                     }
                     break;
 

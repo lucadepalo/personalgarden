@@ -14,11 +14,12 @@ public class SharedPrefManager {
     private static final String KEY_EMAIL = "keyemail";
     private static final String KEY_NOME = "keynome";
     private static final String KEY_COGNOME = "keycognome";
-
     private static final String KEY_ID = "keyid";
-
     private static final String KEY_AIRR = "keyairr";
     private static final String KEY_SUT = "keysut";
+    private static final String FK_LINEA = "fk_linea";
+    private static final String FK_POSTO = "fk_posto";
+    private static final String FK_SPECIE = "fk_specie";
     private static SharedPrefManager mInstance;
     private static Context mCtx;
 
@@ -46,11 +47,27 @@ public class SharedPrefManager {
         editor.apply();
     }
 
-    public void qrRegistration(Node node) {
+    public void qrRegistration(Node node) { //relazione "controlla"
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_AIRR, node.getAirr());
         editor.putString(KEY_SUT, node.getSut());
+        editor.apply();
+    }
+
+    public void setLine(IrrigatedLine line) { //relazione "dispone"
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(FK_LINEA, line.getNumLine());
+        editor.putInt(FK_POSTO, line.getNumPLace());
+        editor.apply();
+    }
+
+    public void setCrop(PlantPot plantPot) { //relazione "assegnata"
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(FK_POSTO, plantPot.getNumPLace());
+        editor.putInt(FK_SPECIE, plantPot.getCropID());
         editor.apply();
     }
 
@@ -62,11 +79,7 @@ public class SharedPrefManager {
 
     public boolean isCoupled() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        if ((sharedPreferences.getString(KEY_AIRR, null) != null) && (sharedPreferences.getString(KEY_SUT, null) != null)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (sharedPreferences.getString(KEY_AIRR, null) != null) && (sharedPreferences.getString(KEY_SUT, null) != null);
     }
 
     //this method will give the logged in user
