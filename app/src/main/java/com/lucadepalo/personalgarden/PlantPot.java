@@ -5,24 +5,37 @@ import java.util.HashMap;
 public class PlantPot {
 
     private int numPlace, cropID;
-    private HashMap<Integer, String> cropList;
+    //private String crop;
 
-    public PlantPot(int numPlace, int cropID) {
+
+    public PlantPot() {
+    }
+
+    public void setNumPlace(int numPlace) {
         this.numPlace = numPlace;
-        this.cropID = cropID;
     }
 
     public int getNumPLace() {
         return numPlace;
     }
 
+    /*
+    public void setCrop(String crop){
+        this.crop = crop;
+    }
+
+    public String getCrop() {
+        return crop;
+    }
+    */
+
+    public void setCropID(int cropID) {
+        this.cropID = cropID;
+    }
+
     public int getCropID() {
         return cropID;
     }
 
-    public HashMap<Integer, String> getCropList() {
-        String json = RequestHandler.sendGetRequest(URLs.URL_CROPLIST);
-        HashMap<Integer, String> cropList = RequestHandler.parseJsonToHashMap(json);
-        return cropList;
-    }
+
 }

@@ -115,16 +115,58 @@ public class RequestHandler {
         return sb.toString();
     }
 
+    public static String sendParamGetRequest(String requestURL, String parameterName, String parameterValue) {
+        URL url;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            // Costruire l'URL di richiesta includendo il parametro
+            String requestUrlWithParams = requestURL + "?" + parameterName + "=" + URLEncoder.encode(parameterValue, "UTF-8");
+            url = new URL(requestUrlWithParams);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String response;
+
+                while ((response = br.readLine()) != null) {
+                    sb.append(response);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+
+
     // Method to convert the JSON string response into a HashMap
     public static HashMap<Integer, String> parseJsonToHashMap(String jsonString) {
         HashMap<Integer, String> resultMap = new HashMap<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
-            Iterator<String> keys = jsonObject.keys();
+            boolean error = jsonObject.getBoolean("error");
+            String message = jsonObject.getString("message");
 
-            while(keys.hasNext()) {
-                String key = keys.next();
-                resultMap.put(Integer.parseInt(key), jsonObject.getString(key));
+            if (!error) {
+                JSONObject speciesJson = jsonObject.getJSONObject("species");
+                Iterator<String> keys = speciesJson.keys();
+
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    resultMap.put(Integer.parseInt(key), speciesJson.getString(key));
+                }
+            } else {
+                // Gestisci l'errore in base alle tue esigenze
             }
         } catch (JSONException e) {
             e.printStackTrace();

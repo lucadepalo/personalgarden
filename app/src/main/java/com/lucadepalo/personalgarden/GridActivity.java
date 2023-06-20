@@ -2,8 +2,11 @@ package com.lucadepalo.personalgarden;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.ClipData;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.DragEvent;
 import android.view.MotionEvent;
@@ -12,16 +15,23 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
 public class GridActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CODE = 1;
     private ImageView plantIcon;
     private ImageView trashIcon;
     private GridLayout gridLayout;
     private FrameLayout[] cells = new FrameLayout[8];
-    private HashMap<String, String> irrigationLine = new HashMap<>();
+    private HashMap<Integer, Integer> line = new HashMap<>();
+
+    private int cropID = 0;
+
+
+    private IrrigationLine irrigationLine = new IrrigationLine(0);
     private int plantNumber = 0;
 
     @Override
@@ -30,27 +40,29 @@ public class GridActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grid);
 
         plantIcon = findViewById(R.id.plant_pot_icon);
-        plantIcon.setTag("pot0");  // Set tag for the initial plant pot
+        plantIcon.setTag(0);
         trashIcon = findViewById(R.id.trash_icon);
         gridLayout = findViewById(R.id.grid_layout);
 
+
         // Initialize the cells array with FrameLayout views
         cells[0] = findViewById(R.id.cell1);
-        cells[0].setTag("cell1");
+        cells[0].setTag(1);
         cells[1] = findViewById(R.id.cell2);
-        cells[1].setTag("cell2");
+        cells[1].setTag(2);
         cells[2] = findViewById(R.id.cell3);
-        cells[2].setTag("cell3");
+        cells[2].setTag(3);
         cells[3] = findViewById(R.id.cell4);
-        cells[3].setTag("cell4");
+        cells[3].setTag(4);
         cells[4] = findViewById(R.id.cell5);
-        cells[4].setTag("cell5");
+        cells[4].setTag(5);
         cells[5] = findViewById(R.id.cell6);
-        cells[5].setTag("cell6");
+        cells[5].setTag(6);
         cells[6] = findViewById(R.id.cell7);
-        cells[6].setTag("cell7");
+        cells[6].setTag(7);
         cells[7] = findViewById(R.id.cell8);
-        cells[7].setTag("cell8");
+        cells[7].setTag(8);
+
 
         // Add drag and drop logic to the ImageView
         plantIcon.setOnTouchListener(new MyTouchListener());
@@ -81,7 +93,9 @@ public class GridActivity extends AppCompatActivity {
                             parent.removeView(view);
 
                             // Remove the association from the HashMap
-                            irrigationLine.remove(parent.getTag().toString());
+                            line.remove(parent.getTag().toString());
+                            Toast.makeText(getBaseContext(), "Eliminato", Toast.LENGTH_SHORT).show();
+
                         }
                         break;
 
@@ -109,16 +123,17 @@ public class GridActivity extends AppCompatActivity {
                     // Se la cella è vuota, aggiungi una pianta
                     FrameLayout clickedCell = (FrameLayout) v;
                     if (clickedCell.getChildCount() == 0) {
-                        ImageView plant = new ImageView(getApplicationContext());
-                        plant.setImageDrawable(getResources().getDrawable(R.drawable.ic_pot));
+                        ImageView pot = new ImageView(getApplicationContext());
+                        pot.setImageDrawable(getResources().getDrawable(R.drawable.ic_pot));
 
                         // Set the unique tag for the new pot
-                        String newPotTag = "pot" + (++plantNumber);
-                        plant.setTag(newPotTag);
-                        clickedCell.addView(plant);
+                        int newPotTag = ++plantNumber;
+                        pot.setTag(newPotTag);
+
+                        clickedCell.addView(pot);
 
                         // Add the new association to the HashMap
-                        irrigationLine.put(clickedCell.getTag().toString(), newPotTag);
+                        line.put((Integer) clickedCell.getTag(), newPotTag);
                     }
                 }
             });
@@ -174,9 +189,29 @@ public class GridActivity extends AppCompatActivity {
                         droppedImage.setTag(draggedView.getTag());  // Make sure to set the tag for the dropped image
                         targetView.addView(droppedImage);
                         droppedImage.setOnTouchListener(new MyTouchListener());
+                        if ((int) droppedImage.getTag() == (0)) {
+                            Toast.makeText(getBaseContext(), "FIRST POT LOADED", Toast.LENGTH_SHORT).show();
+                            PlantPot pot = new PlantPot();
+                            pot.setNumPlace((int) droppedImage.getTag());
+
+                            //Intent intent = new Intent(getApplicationContext(), SetCropActivity.class);
+                            //intent.putExtra("com.lucadepalo.personalgarden.numPlace", (int) targetView.getTag());
+                            //startActivity(intent);
+
+                            Intent intent = new Intent(GridActivity.this, SetCropActivity.class);
+                            startActivityForResult(intent, REQUEST_CODE);
+
+                            pot.setCropID(cropID);
+
+                        } else {
+                            Toast.makeText(getBaseContext(), "SETCROPACTIVITY ELSE", Toast.LENGTH_SHORT).show();
+                            //startActivity(new Intent(getApplicationContext(), SetCropActivity.class).putExtra("numPlace",(int)droppedImage.getTag()).putExtra("fk_specie1",fk_specie1));
+                        }
+                        //PlantPot pot = new PlantPot((int)targetView.getTag(), 0);
+
 
                         // Add the new association to the HashMap
-                        irrigationLine.put(targetView.getTag().toString(), droppedImage.getTag().toString());
+                        line.put((Integer) targetView.getTag(), (Integer) droppedImage.getTag());
                     }
 
                     // Ensure that the draggedView is not the original plantIcon
@@ -185,7 +220,7 @@ public class GridActivity extends AppCompatActivity {
                         oldParent.removeView(draggedView);
 
                         // Remove the old association from the HashMap
-                        irrigationLine.remove(oldParent.getTag().toString());
+                        line.remove((Integer) oldParent.getTag());
                     }
                     break;
 
@@ -211,5 +246,54 @@ public class GridActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    private void irriga(int fk_contenitore, int fk_linea){
+        final String FK_CONTENITORE = ((Integer)fk_contenitore).toString();
+        final String FK_LINEA = ((Integer)fk_linea).toString();
+
+        class RelazioneIrriga extends AsyncTask<Void, Void, String> {
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                RequestHandler requestHandler = new RequestHandler();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("fk_contenitore", FK_CONTENITORE);
+                params.put("fk_linea", FK_LINEA);
+
+                return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
+            }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                Container container = new Container(0);
+                container.addIrrigationLine(irrigationLine);
+
+                SharedPrefManager.getInstance(getApplicationContext()).setLineInContainer(container,irrigationLine);
+            }
+        }
+        RelazioneIrriga ri = new RelazioneIrriga();
+        ri.execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                // Estrai il valore dalla Intent data
+                cropID = data.getIntExtra("cropInt", 0);
+
+            }
+        }
+    }
+
+
+
+
 }
 

@@ -16,7 +16,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".setCropActivity"
+            android:name=".SynergyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SetCropActivity"
             android:exported="false" />
         <activity
             android:name=".GridActivity"

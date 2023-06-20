@@ -20,6 +20,7 @@ public class SharedPrefManager {
     private static final String FK_LINEA = "fk_linea";
     private static final String FK_POSTO = "fk_posto";
     private static final String FK_SPECIE = "fk_specie";
+    private static final String FK_CONTENITORE = "fk_contenitore";
     private static SharedPrefManager mInstance;
     private static Context mCtx;
 
@@ -55,15 +56,24 @@ public class SharedPrefManager {
         editor.apply();
     }
 
-    public void setLine(IrrigatedLine line) { //relazione "dispone"
+    public void setLineInContainer(Container container, IrrigationLine irrigationLine) { //relazione irriga
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(FK_LINEA, line.getNumLine());
-        editor.putInt(FK_POSTO, line.getNumPLace());
+        editor.putInt(FK_CONTENITORE, container.getNumContainer());
+        editor.putInt(FK_LINEA, irrigationLine.getNumLine());
         editor.apply();
     }
 
-    public void setCrop(PlantPot plantPot) { //relazione "assegnata"
+    public void setPotInLine(IrrigationLine irrigationLine, PlantPot plantPot) { //relazione "dispone"
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(FK_LINEA, irrigationLine.getNumLine());
+        editor.putInt(FK_POSTO, plantPot.getNumPLace());
+        editor.apply();
+    }
+
+
+    public void setCropInPot(PlantPot plantPot) { //relazione "assegnata"
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(FK_POSTO, plantPot.getNumPLace());
