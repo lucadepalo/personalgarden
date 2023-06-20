@@ -1,5 +1,8 @@
 package com.lucadepalo.personalgarden;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -11,6 +14,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -62,7 +66,6 @@ public class RequestHandler {
         return sb.toString();
     }
 
-
     //this method is converting keyvalue pairs data into a query string as needed to send to the server
     private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
@@ -80,4 +83,96 @@ public class RequestHandler {
 
         return result.toString();
     }
+
+    // Method to send a GET request to the server
+    public static String sendGetRequest(String requestURL) {
+        URL url;
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            url = new URL(requestURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                sb = new StringBuilder();
+                String response;
+
+                while ((response = br.readLine()) != null) {
+                    sb.append(response);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    public static String sendParamGetRequest(String requestURL, String parameterName, String parameterValue) {
+        URL url;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            // Costruire l'URL di richiesta includendo il parametro
+            String requestUrlWithParams = requestURL + "?" + parameterName + "=" + URLEncoder.encode(parameterValue, "UTF-8");
+            url = new URL(requestUrlWithParams);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+
+            int responseCode = conn.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String response;
+
+                while ((response = br.readLine()) != null) {
+                    sb.append(response);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
+
+
+
+    // Method to convert the JSON string response into a HashMap
+    public static HashMap<Integer, String> parseJsonToHashMap(String jsonString) {
+        HashMap<Integer, String> resultMap = new HashMap<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
+            boolean error = jsonObject.getBoolean("error");
+            String message = jsonObject.getString("message");
+
+            if (!error) {
+                JSONObject speciesJson = jsonObject.getJSONObject("species");
+                Iterator<String> keys = speciesJson.keys();
+
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    resultMap.put(Integer.parseInt(key), speciesJson.getString(key));
+                }
+            } else {
+                // Gestisci l'errore in base alle tue esigenze
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return resultMap;
+    }
+
 }

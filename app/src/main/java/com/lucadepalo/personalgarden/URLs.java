@@ -12,4 +12,10 @@ public class URLs {
 
     public static final String URL_QRCODE = ROOT_URL + "qrcode";
 
+    public static final String URL_CROPLIST = ROOT_URL + "croplist";
+
+    public static final String URL_SUGGEST = ROOT_URL + "suggest";
+
+
+
 }
