@@ -207,8 +207,6 @@ public class GridActivity extends AppCompatActivity {
                             Toast.makeText(getBaseContext(), "SETCROPACTIVITY ELSE", Toast.LENGTH_SHORT).show();
                             //startActivity(new Intent(getApplicationContext(), SetCropActivity.class).putExtra("numPlace",(int)droppedImage.getTag()).putExtra("fk_specie1",fk_specie1));
                         }
-                        //PlantPot pot = new PlantPot((int)targetView.getTag(), 0);
-
 
                         // Add the new association to the HashMap
                         line.put((Integer) targetView.getTag(), (Integer) droppedImage.getTag());
