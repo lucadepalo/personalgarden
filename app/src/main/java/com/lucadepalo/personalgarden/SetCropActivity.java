@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -18,7 +19,7 @@ import java.util.HashMap;
 public class SetCropActivity extends AppCompatActivity {
 
     private HashMap<Integer, String> cropList = new HashMap<>();
-    protected int cropInt = 0;
+    private boolean isItemSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class SetCropActivity extends AppCompatActivity {
         setContentView(R.layout.activity_set_crop);
 
         new GetAllCropListTask().execute(URLs.URL_CROPLIST);
+
     }
 
     private class GetAllCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
@@ -61,19 +63,34 @@ public class SetCropActivity extends AppCompatActivity {
                 android.R.layout.simple_spinner_item, new ArrayList<>(cropList.values()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-
+        Button buttonConfirm = findViewById(R.id.button_confirm);
+        if (buttonConfirm != null) {
+            buttonConfirm.setEnabled(false);
+        } else {
+            Toast.makeText(SetCropActivity.this, "DEBUG_MODE: ERROR_NULL_BUTTON:", Toast.LENGTH_SHORT).show();
+        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
                 if (position > 0) {
                     String selectedCrop = parent.getItemAtPosition(position).toString();
                     Toast.makeText(SetCropActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
-
                     Intent returnIntent = new Intent();
-                    cropInt = getKeyByValue(cropList, selectedCrop);
+                    int cropInt = getKeyByValue(cropList, selectedCrop);
                     returnIntent.putExtra("cropInt", cropInt);
                     setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                    isItemSelected = true;
+                    buttonConfirm.setEnabled(true);
+                    findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            finish();
+                        }
+                    });
+                } else {
+                    isItemSelected = false;
+                    buttonConfirm.setEnabled(false);
                 }
             }
 
