@@ -186,17 +186,15 @@ public class GridActivity extends AppCompatActivity {
                     if (drawable != null) {
                         ImageView droppedImage = new ImageView(getApplicationContext());
                         droppedImage.setImageDrawable(drawable);
-                        droppedImage.setTag(draggedView.getTag());  // Make sure to set the tag for the dropped image
+                        droppedImage.setTag(plantNumber);  // Make sure to set the tag for the dropped image
+                        plantNumber++;
                         targetView.addView(droppedImage);
                         droppedImage.setOnTouchListener(new MyTouchListener());
                         if ((int) droppedImage.getTag() == (0)) {
+
                             Toast.makeText(getBaseContext(), "FIRST POT LOADED", Toast.LENGTH_SHORT).show();
                             PlantPot pot = new PlantPot();
                             pot.setNumPlace((int) droppedImage.getTag());
-
-                            //Intent intent = new Intent(getApplicationContext(), SetCropActivity.class);
-                            //intent.putExtra("com.lucadepalo.personalgarden.numPlace", (int) targetView.getTag());
-                            //startActivity(intent);
 
                             Intent intent = new Intent(GridActivity.this, SetCropActivity.class);
                             startActivityForResult(intent, REQUEST_CODE);
@@ -206,6 +204,16 @@ public class GridActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(getBaseContext(), "SETCROPACTIVITY ELSE", Toast.LENGTH_SHORT).show();
                             //startActivity(new Intent(getApplicationContext(), SetCropActivity.class).putExtra("numPlace",(int)droppedImage.getTag()).putExtra("fk_specie1",fk_specie1));
+                            PlantPot pot = new PlantPot();
+                            pot.setNumPlace((int) droppedImage.getTag());
+
+                            Intent intent = new Intent(GridActivity.this, SynergyActivity.class);
+                            intent.putExtra("fk_specie1", cropID); //sostituire con vero valore
+
+                            startActivityForResult(intent, REQUEST_CODE);
+
+                            pot.setCropID(cropID);
+
                         }
 
                         // Add the new association to the HashMap
