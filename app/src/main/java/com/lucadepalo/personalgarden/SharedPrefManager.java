@@ -24,6 +24,8 @@ public class SharedPrefManager {
     private static SharedPrefManager mInstance;
     private static Context mCtx;
 
+    public static IrrigationLine irrigationLine = new IrrigationLine(0);
+
     private SharedPrefManager(Context context) {
         mCtx = context;
     }
@@ -68,7 +70,7 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(FK_LINEA, irrigationLine.getNumLine());
-        editor.putInt(FK_POSTO, plantPot.getNumPLace());
+        editor.putInt(FK_POSTO, plantPot.getNumPlace());
         editor.apply();
     }
 
@@ -76,7 +78,7 @@ public class SharedPrefManager {
     public void setCropInPot(PlantPot plantPot) { //relazione "assegnata"
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(FK_POSTO, plantPot.getNumPLace());
+        editor.putInt(FK_POSTO, plantPot.getNumPlace());
         editor.putInt(FK_SPECIE, plantPot.getCropID());
         editor.apply();
     }

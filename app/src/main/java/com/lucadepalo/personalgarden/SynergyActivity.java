@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,19 +21,26 @@ public class SynergyActivity extends AppCompatActivity {
 
     private HashMap<Integer, String> synCropList = new HashMap<>();
     private boolean isItemSelected = false;
-    private Integer fk_specie1;
+    private int potID;
+    private String topElement = "Seleziona...";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_synergy);
 
+        if (getIntent() != null && getIntent().hasExtra("potID")) {
+            potID = getIntent().getIntExtra("potID", -1);
+        } else {
+        }
+
         new GetSynergyCropListTask().execute(URLs.URL_SUGGEST);
-        /*Spinner spinner = findViewById(R.id.syn_crop_spinner);
+        Spinner spinner = findViewById(R.id.syn_crop_spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, new ArrayList<>(synCropList.values()));
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);*/
+        spinner.setAdapter(adapter);
     }
 
     class GetSynergyCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
@@ -41,7 +49,7 @@ public class SynergyActivity extends AppCompatActivity {
             HashMap<Integer, String> result = null;
             try {
                 HashMap<String, String> postDataParams = new HashMap<>();
-                postDataParams.put("fk_specie1", String.valueOf(fk_specie1));
+                postDataParams.put("fk_specie1", String.valueOf(SharedPrefManager.irrigationLine.getPotByID(potID-1).getCropID()));
                 RequestHandler requestHandler = new RequestHandler();
                 String json = requestHandler.sendPostRequest(urls[0], postDataParams);
                 result = RequestHandler.parseJsonToHashMap(json);
@@ -78,8 +86,10 @@ public class SynergyActivity extends AppCompatActivity {
 
     private void populateSpinner() {
         Spinner spinner = findViewById(R.id.syn_crop_spinner);
+        ArrayList<String> dataList = new ArrayList<>(synCropList.values());
+        dataList.add(0, topElement);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new ArrayList<>(synCropList.values()));
+                android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         Button buttonConfirm = findViewById(R.id.button_confirm);
@@ -104,6 +114,8 @@ public class SynergyActivity extends AppCompatActivity {
                     findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            SharedPrefManager.irrigationLine.getPotByID(potID).setCropID(cropInt);
+
                             finish();
                         }
                     });

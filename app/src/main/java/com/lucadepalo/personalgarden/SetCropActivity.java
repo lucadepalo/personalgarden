@@ -20,6 +20,8 @@ public class SetCropActivity extends AppCompatActivity {
 
     private HashMap<Integer, String> cropList = new HashMap<>();
     private boolean isItemSelected = false;
+    //private Intent intent = getIntent();
+    private String topElement = "Seleziona...";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +61,10 @@ public class SetCropActivity extends AppCompatActivity {
 
     private void populateSpinner() {
         Spinner spinner = findViewById(R.id.crop_spinner);
+        ArrayList<String> dataList = new ArrayList<>(cropList.values());
+        dataList.add(0, topElement);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, new ArrayList<>(cropList.values()));
+                android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         Button buttonConfirm = findViewById(R.id.button_confirm);
@@ -78,13 +82,14 @@ public class SetCropActivity extends AppCompatActivity {
                     Toast.makeText(SetCropActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
                     Intent returnIntent = new Intent();
                     int cropInt = getKeyByValue(cropList, selectedCrop);
-                    returnIntent.putExtra("cropInt", cropInt);
-                    setResult(Activity.RESULT_OK, returnIntent);
+                    // returnIntent.putExtra("cropInt", cropInt);
+                    // setResult(Activity.RESULT_OK, returnIntent);
                     isItemSelected = true;
                     buttonConfirm.setEnabled(true);
                     findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            SharedPrefManager.irrigationLine.getPotByID(0).setCropID(cropInt);
                             finish();
                         }
                     });
