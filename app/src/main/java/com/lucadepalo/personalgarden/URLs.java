@@ -2,9 +2,12 @@ package com.lucadepalo.personalgarden;
 
 public class URLs {
 
-    //private static final String ROOT_URL = "http://172.29.33.195/Api.php?apicall=";
+    private static final String ROOT_URL = "http://172.29.29.89/Api.php?apicall=";
 
-    private static final String ROOT_URL = "http://192.168.1.149/Api.php?apicall=";
+    //private static final String ROOT_URL = "http://192.168.1.149/Api.php?apicall=";
+
+    //private static final String ROOT_URL = "http://192.168.126.43/Api.php?apicall=";
+
 
     public static final String URL_REGISTER = ROOT_URL + "signup";
 

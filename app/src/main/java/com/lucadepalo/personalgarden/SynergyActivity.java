@@ -33,6 +33,7 @@ public class SynergyActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().hasExtra("potID")) {
             potID = getIntent().getIntExtra("potID", -1);
         } else {
+            Toast.makeText(getBaseContext(), "ERROR INTENT POT ID", Toast.LENGTH_SHORT);
         }
 
         new GetSynergyCropListTask().execute(URLs.URL_SUGGEST);
