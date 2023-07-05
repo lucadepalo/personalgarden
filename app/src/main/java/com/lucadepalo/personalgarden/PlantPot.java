@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class PlantPot extends AppCompatImageView {
     private int numPlace;
-    private int cropID;
+    private int cropID = -1;
     private int potID;
 
     public PlantPot(Context context) {

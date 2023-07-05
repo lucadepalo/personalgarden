@@ -34,7 +34,7 @@ le piante vicine. Questo assicurerà che le tue piante crescano al meglio benefi
 
         <Spinner
             android:id="@+id/syn_crop_spinner"
-            android:layout_width="200dp"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:minHeight="48dp"

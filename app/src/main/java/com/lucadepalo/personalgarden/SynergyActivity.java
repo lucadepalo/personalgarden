@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class SynergyActivity extends AppCompatActivity {
@@ -88,9 +91,14 @@ public class SynergyActivity extends AppCompatActivity {
     private void populateSpinner() {
         Spinner spinner = findViewById(R.id.syn_crop_spinner);
         ArrayList<String> dataList = new ArrayList<>(synCropList.values());
+        Collections.sort(dataList);
         dataList.add(0, topElement);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, dataList);
+
+        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this, dataList);
+        spinner.setAdapter(adapter);
+
+        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                //android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         Button buttonConfirm = findViewById(R.id.button_confirm);
@@ -106,16 +114,24 @@ public class SynergyActivity extends AppCompatActivity {
                 if (position > 0) {
                     String selectedCrop = parent.getItemAtPosition(position).toString();
                     Toast.makeText(SynergyActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
-                    Intent returnIntent = new Intent();
+                    //Intent returnIntent = new Intent();
                     int cropInt = getKeyByValue(synCropList, selectedCrop);
-                    returnIntent.putExtra("cropInt", cropInt);
-                    setResult(Activity.RESULT_OK, returnIntent);
+                    //returnIntent.putExtra("cropInt", cropInt);
+                    //setResult(Activity.RESULT_OK, returnIntent);
                     isItemSelected = true;
                     buttonConfirm.setEnabled(true);
                     findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             SharedPrefManager.irrigationLine.getPotByID(potID).setCropID(cropInt);
+
+                            String imageName = selectedCrop.toLowerCase().replace(" ", "_");
+                            int imageResId = getBaseContext().getResources().getIdentifier(imageName, "drawable", getBaseContext().getPackageName());
+                            Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
+                            Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 100, 100, true);
+                            SharedPrefManager.irrigationLine.getPotByID(potID).setImageBitmap(resizedBitmap);
+                            if (originalBitmap != resizedBitmap)
+                                originalBitmap.recycle();
 
                             finish();
                         }

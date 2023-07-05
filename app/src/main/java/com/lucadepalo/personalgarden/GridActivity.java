@@ -62,7 +62,9 @@ public class GridActivity extends AppCompatActivity {
                         v.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light)); // Change color to indicate active drop area
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
-                        v.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Change color back to normal when item is not over the trash icon
+                    case DragEvent.ACTION_DRAG_ENDED:
+                        v.setBackground(getDrawable(R.drawable.filled));
+                        //v.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Change color back to normal when item is not over the trash icon
                         break;
                     case DragEvent.ACTION_DROP:
                         View view = (View) event.getLocalState();
@@ -76,9 +78,6 @@ public class GridActivity extends AppCompatActivity {
                             SharedPrefManager.irrigationLine.deletePotInPlace((Integer) parent.getTag());
                             Toast.makeText(getBaseContext(), "Eliminato", Toast.LENGTH_SHORT).show();
                         }
-                        break;
-                    case DragEvent.ACTION_DRAG_ENDED:
-                        v.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Change color back to normal when drag is completed
                         break;
                     default:
                         break;
@@ -129,33 +128,38 @@ public class GridActivity extends AppCompatActivity {
                     View draggedView = (View) event.getLocalState();
                     FrameLayout targetView = (FrameLayout) v;
                     Drawable drawable = ((ImageView) draggedView).getDrawable();
-                    if (drawable != null) {
-                        ImageView droppedImage = new ImageView(getApplicationContext());
-                        droppedImage.setImageDrawable(drawable);
-                        droppedImage.setTag(plantNumber);  // Make sure to set the tag for the dropped image
-                        plantNumber++;
-                        targetView.addView(droppedImage);
-                        droppedImage.setOnTouchListener(new MyTouchListener());
+                    if (drawable != null ) {
+                        //ImageView droppedImage = new ImageView(getApplicationContext());
+                        //droppedImage.setImageDrawable(drawable);
+                        //droppedImage.setTag(plantNumber);  // Make sure to set the tag for the dropped image
+                        pots[plantNumber].setPotID(plantNumber);
+                        //targetView.addView(droppedImage);
+                        targetView.addView(pots[plantNumber]);
+                        //droppedImage.setOnTouchListener(new MyTouchListener());
+                        pots[plantNumber].setOnTouchListener(new MyTouchListener());
+                        //SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[(int) droppedImage.getTag()]);
+                        SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[plantNumber]);
 
-                        SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[(int) droppedImage.getTag()]);
-
-                        if ((int) droppedImage.getTag() == (0)) {
+                        //if ((int) droppedImage.getTag() == 0) {
+                        if (pots[plantNumber].getPotID() == 0) {
                             Toast.makeText(getBaseContext(), "FIRST POT LOADED", Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(GridActivity.this, SetCropActivity.class);
 
                             startActivity(intent);
-                            //pots[(int) droppedImage.getTag()].setCropID(cropID);
                         } else {
                             Toast.makeText(getBaseContext(), "SETCROPACTIVITY ELSE", Toast.LENGTH_SHORT).show();
                             //startActivity(new Intent(getApplicationContext(), SetCropActivity.class).putExtra("numPlace",(int)droppedImage.getTag()).putExtra("fk_specie1",fk_specie1));
 
                             Intent intent = new Intent(GridActivity.this, SynergyActivity.class);
-                            intent.putExtra("potID", (int) droppedImage.getTag());
+                            //intent.putExtra("potID", (int) droppedImage.getTag());
+                            intent.putExtra("potID", plantNumber);
                             startActivity(intent);
                             //startActivityForResult(intent, REQUEST_CODE);
                             //pots[(int) droppedImage.getTag()].setCropID(cropID);
                         }
+                        plantNumber++;
+
                         // Add the new association to the HashMap
                         // line.put((Integer) targetView.getTag(), (Integer) droppedImage.getTag());
                     }
