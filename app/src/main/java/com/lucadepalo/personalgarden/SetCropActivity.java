@@ -99,7 +99,6 @@ public class SetCropActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             SharedPrefManager.irrigationLine.getPotByID(0).setCropID(cropInt);
-
                             String imageName = selectedCrop.toLowerCase().replace(" ", "_");
                             int imageResId = getBaseContext().getResources().getIdentifier(imageName, "drawable", getBaseContext().getPackageName());
                             Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
@@ -107,7 +106,7 @@ public class SetCropActivity extends AppCompatActivity {
                             SharedPrefManager.irrigationLine.getPotByID(0).setImageBitmap(resizedBitmap);
                             if (originalBitmap != resizedBitmap)
                                 originalBitmap.recycle();
-
+                            assegnata(SharedPrefManager.irrigationLine.getPotByID(0),cropInt);
                             finish();
                         }
                     });
@@ -133,4 +132,33 @@ public class SetCropActivity extends AppCompatActivity {
         }
         return null;
     }
+    private void assegnata(PlantPot plantPot, int fk_specie) {
+        final String FK_POSTO = ((Integer) plantPot.getNumPlace()).toString();
+        final String FK_SPECIE =((Integer) fk_specie).toString();
+        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+            @Override
+            protected String doInBackground(Void... voids) {
+                RequestHandler requestHandler = new RequestHandler();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("fk_posto", FK_POSTO);
+                params.put("fk_linea", FK_SPECIE);
+
+                return requestHandler.sendPostRequest(URLs.URL_ASSEGNATA, params);
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
+            }
+        }
+        RelazioneDispone rd = new RelazioneDispone();
+        rd.execute();
+    }
+
 }

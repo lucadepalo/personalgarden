@@ -17,14 +17,16 @@ public class SharedPrefManager {
     private static final String KEY_ID = "keyid";
     private static final String KEY_AIRR = "keyairr";
     private static final String KEY_SUT = "keysut";
+    private static final String FK_CONTENITORE = "fk_contenitore";
     private static final String FK_LINEA = "fk_linea";
     private static final String FK_POSTO = "fk_posto";
     private static final String FK_SPECIE = "fk_specie";
-    private static final String FK_CONTENITORE = "fk_contenitore";
     private static SharedPrefManager mInstance;
     private static Context mCtx;
 
+    public static Container container = new Container(0);
     public static IrrigationLine irrigationLine = new IrrigationLine(0);
+
 
     private SharedPrefManager(Context context) {
         mCtx = context;

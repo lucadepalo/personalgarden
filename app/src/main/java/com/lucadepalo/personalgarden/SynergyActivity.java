@@ -53,7 +53,7 @@ public class SynergyActivity extends AppCompatActivity {
             HashMap<Integer, String> result = null;
             try {
                 HashMap<String, String> postDataParams = new HashMap<>();
-                postDataParams.put("fk_specie1", String.valueOf(SharedPrefManager.irrigationLine.getPotByID(potID-1).getCropID()));
+                postDataParams.put("fk_specie1", String.valueOf(SharedPrefManager.irrigationLine.getPotByID(potID - 1).getCropID()));
                 RequestHandler requestHandler = new RequestHandler();
                 String json = requestHandler.sendPostRequest(urls[0], postDataParams);
                 result = RequestHandler.parseJsonToHashMap(json);
@@ -98,7 +98,7 @@ public class SynergyActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
         //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                //android.R.layout.simple_spinner_item, dataList);
+        //android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         Button buttonConfirm = findViewById(R.id.button_confirm);
@@ -116,15 +116,12 @@ public class SynergyActivity extends AppCompatActivity {
                     Toast.makeText(SynergyActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
                     //Intent returnIntent = new Intent();
                     int cropInt = getKeyByValue(synCropList, selectedCrop);
-                    //returnIntent.putExtra("cropInt", cropInt);
-                    //setResult(Activity.RESULT_OK, returnIntent);
                     isItemSelected = true;
                     buttonConfirm.setEnabled(true);
                     findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             SharedPrefManager.irrigationLine.getPotByID(potID).setCropID(cropInt);
-
                             String imageName = selectedCrop.toLowerCase().replace(" ", "_");
                             int imageResId = getBaseContext().getResources().getIdentifier(imageName, "drawable", getBaseContext().getPackageName());
                             Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(), imageResId);
@@ -132,7 +129,7 @@ public class SynergyActivity extends AppCompatActivity {
                             SharedPrefManager.irrigationLine.getPotByID(potID).setImageBitmap(resizedBitmap);
                             if (originalBitmap != resizedBitmap)
                                 originalBitmap.recycle();
-
+                            assegnata(SharedPrefManager.irrigationLine.getPotByID(potID),cropInt);
                             finish();
                         }
                     });
@@ -157,5 +154,34 @@ public class SynergyActivity extends AppCompatActivity {
             }
         }
         return null;
+    }
+
+    private void assegnata(PlantPot plantPot, int fk_specie) {
+        final String FK_POSTO = ((Integer) plantPot.getNumPlace()).toString();
+        final String FK_SPECIE =((Integer) fk_specie).toString();
+        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+            @Override
+            protected String doInBackground(Void... voids) {
+                RequestHandler requestHandler = new RequestHandler();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("fk_posto", FK_POSTO);
+                params.put("fk_linea", FK_SPECIE);
+
+                return requestHandler.sendPostRequest(URLs.URL_ASSEGNATA, params);
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
+            }
+        }
+        RelazioneDispone rd = new RelazioneDispone();
+        rd.execute();
     }
 }

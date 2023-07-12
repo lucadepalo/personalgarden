@@ -21,11 +21,12 @@
 
     <Button
         android:id="@+id/scanBtn"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:background="@drawable/filled"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="10dp"
-        android:backgroundTint="@color/colorPrimaryDark"
         android:text="Inquadra QR"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -45,7 +45,7 @@ public class IrrigationLine {
     public void movePotToPlace(int fromPlace, int toPlace) {
         PlantPot plantPot = this.line.get((fromPlace));
         if (plantPot == null) {
-            throw new IllegalArgumentException("No pot in the specified fromPlace");
+            throw new IllegalArgumentException("Nessun vaso presente nel posto indicato");
         } else if (this.line.get(toPlace) == null) {
             this.line.put(toPlace, plantPot);
             deletePotInPlace(fromPlace);
@@ -58,7 +58,7 @@ public class IrrigationLine {
         if (this.line.containsValue(plantPot)) {
             this.line.remove((getKeyByValue(this.line, plantPot)));
         } else {
-            throw new IllegalArgumentException("The specified pot does not exist in the line");
+            throw new IllegalArgumentException("Vaso non presente in questa linea");
         }
     }
 
@@ -70,7 +70,7 @@ public class IrrigationLine {
         PlantPot plantPot2 = this.line.get(numPlace2);
 
         if (plantPot1 == null || plantPot2 == null) {
-            throw new IllegalArgumentException("Both places must have a pot for swapping to occur");
+            throw new IllegalArgumentException("Ci devono essere due vasi per poterli scambiare");
         }
 
         this.line.put(numPlace1, plantPot2);

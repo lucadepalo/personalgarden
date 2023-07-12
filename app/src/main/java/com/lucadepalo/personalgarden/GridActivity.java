@@ -6,28 +6,24 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 import java.util.HashMap;
-public class GridActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE = 1;
+public class GridActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView plantIcon, trashIcon;
     private GridLayout gridLayout;
     private FrameLayout[] cells = new FrameLayout[8];
-    //private HashMap<Integer, Integer> line = new HashMap<>();
-    private int cropID = 0;
-
     private int plantNumber = 0;
-
-    public PlantPot[] pots = new PlantPot[8];
-
-
+    private PlantPot[] pots = new PlantPot[8];
+    private Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,45 +32,37 @@ public class GridActivity extends AppCompatActivity {
         plantIcon.setTag(0);
         trashIcon = findViewById(R.id.trash_icon);
         gridLayout = findViewById(R.id.grid_layout);
-        // Initialize the cells array with FrameLayout views
+        button = findViewById((R.id.button_set));
+        button.setOnClickListener(this);
         for (int i = 0; i < cells.length; i++) {
             int resourceId = getResources().getIdentifier("cell" + (i + 1), "id", getPackageName());
             cells[i] = findViewById(resourceId);
-            cells[i].setTag(i + 1);
+            cells[i].setTag(i+1);
         }
-
         for(int i = 0; i < pots.length; i++) {
             pots[i] = new PlantPot(GridActivity.this);
-            pots[i].setPotID(i);
+            pots[i].setPotID(i+1);
         }
-
-        // Add drag and drop logic to the ImageView
         plantIcon.setOnTouchListener(new MyTouchListener());
-        gridLayout.setOnDragListener(new MyDragListener());
+        //gridLayout.setOnDragListener(new MyDragListener());
         trashIcon.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View v, DragEvent event) {
                 switch (event.getAction()) {
                     case DragEvent.ACTION_DRAG_STARTED:
-                        // Do nothing
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
-                        v.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light)); // Change color to indicate active drop area
+                            v.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                     case DragEvent.ACTION_DRAG_ENDED:
                         v.setBackground(getDrawable(R.drawable.filled));
-                        //v.setBackgroundColor(android.graphics.Color.TRANSPARENT); // Change color back to normal when item is not over the trash icon
                         break;
                     case DragEvent.ACTION_DROP:
                         View view = (View) event.getLocalState();
-                        // Only remove the view if it is not the original plant icon
                         if (view != plantIcon && view.getParent() instanceof ViewGroup) {
-                            // Remove the dragged item from its parent layout
                             ViewGroup parent = (ViewGroup) view.getParent();
                             parent.removeView(view);
-                            // Remove the association from the HashMap
-                            // line.remove(parent.getTag().toString());
                             SharedPrefManager.irrigationLine.deletePotInPlace((Integer) parent.getTag());
                             Toast.makeText(getBaseContext(), "Eliminato", Toast.LENGTH_SHORT).show();
                         }
@@ -85,22 +73,27 @@ public class GridActivity extends AppCompatActivity {
                 return true;
             }
         });
-        // Add drag and drop logic to each cell
         for (FrameLayout cell : cells) {
             cell.setOnDragListener(new MyDragListener());
         }
     }
-    // Listener for touch events on the ImageView
+
+    @Override
+    public void onClick(View v) {
+        for(int i = 0; i<pots.length; i++) {
+            dispone(pots[i]);
+            Log.d("PlantPotInfo", "PotID: " + pots[i].getPotID() + ", NumPlace: " + pots[i].getNumPlace() + ", CropID: " + pots[i].getCropID());
+        }
+        irriga();
+    }
+
     private static final class MyTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-                // Set up the shadow to be dragged
                 ClipData data = ClipData.newPlainText("", "");
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
-                // Start the drag and drop operation
                 view.startDragAndDrop(data, shadowBuilder, view, 0);
-                // Make the ImageView invisible during the drag
                 view.setVisibility(View.INVISIBLE);
                 return true;
             } else {
@@ -108,7 +101,6 @@ public class GridActivity extends AppCompatActivity {
             }
         }
     }
-    // Listener for drag and drop events
     private class MyDragListener implements View.OnDragListener {
         boolean droppedOnValidCell = false;
         @Override
@@ -116,64 +108,41 @@ public class GridActivity extends AppCompatActivity {
             switch (event.getAction()) {
                 case DragEvent.ACTION_DRAG_STARTED:
                     droppedOnValidCell = false;
+                    v.setBackgroundResource(R.drawable.border);
                     break;
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    v.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+                    v.setBackgroundResource(R.drawable.border_active);
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
-                    v.setBackground(null);
+                    v.setBackgroundResource(R.drawable.border);
                     break;
                 case DragEvent.ACTION_DROP:
                     droppedOnValidCell = true;
+                    v.setBackgroundResource(R.drawable.border);
                     View draggedView = (View) event.getLocalState();
                     FrameLayout targetView = (FrameLayout) v;
                     Drawable drawable = ((ImageView) draggedView).getDrawable();
                     if (drawable != null ) {
-                        //ImageView droppedImage = new ImageView(getApplicationContext());
-                        //droppedImage.setImageDrawable(drawable);
-                        //droppedImage.setTag(plantNumber);  // Make sure to set the tag for the dropped image
                         pots[plantNumber].setPotID(plantNumber);
-                        //targetView.addView(droppedImage);
+                        pots[plantNumber].setNumPlace((Integer) targetView.getTag());
                         targetView.addView(pots[plantNumber]);
-                        //droppedImage.setOnTouchListener(new MyTouchListener());
                         pots[plantNumber].setOnTouchListener(new MyTouchListener());
-                        //SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[(int) droppedImage.getTag()]);
                         SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[plantNumber]);
-
-                        //if ((int) droppedImage.getTag() == 0) {
                         if (pots[plantNumber].getPotID() == 0) {
-                            Toast.makeText(getBaseContext(), "FIRST POT LOADED", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(GridActivity.this, SetCropActivity.class);
-
-                            startActivity(intent);
+                            startActivity( new Intent(GridActivity.this, SetCropActivity.class));
                         } else {
-                            Toast.makeText(getBaseContext(), "SETCROPACTIVITY ELSE", Toast.LENGTH_SHORT).show();
-                            //startActivity(new Intent(getApplicationContext(), SetCropActivity.class).putExtra("numPlace",(int)droppedImage.getTag()).putExtra("fk_specie1",fk_specie1));
-
-                            Intent intent = new Intent(GridActivity.this, SynergyActivity.class);
-                            //intent.putExtra("potID", (int) droppedImage.getTag());
-                            intent.putExtra("potID", plantNumber);
-                            startActivity(intent);
-                            //startActivityForResult(intent, REQUEST_CODE);
-                            //pots[(int) droppedImage.getTag()].setCropID(cropID);
+                            startActivity(new Intent(GridActivity.this, SynergyActivity.class).putExtra("potID", plantNumber));
                         }
                         plantNumber++;
-
-                        // Add the new association to the HashMap
-                        // line.put((Integer) targetView.getTag(), (Integer) droppedImage.getTag());
                     }
-                    // Ensure that the draggedView is not the original plantIcon
                     if (draggedView != plantIcon) {
                         ViewGroup oldParent = (ViewGroup) draggedView.getParent();
                         oldParent.removeView(draggedView);
-                        // Remove the old association from the HashMap
-                        // line.remove((Integer) oldParent.getTag());
                         SharedPrefManager.irrigationLine.deletePotInPlace((Integer) oldParent.getTag());
                     }
                     break;
                 case DragEvent.ACTION_DRAG_ENDED:
-                    v.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    v.setBackgroundResource(R.drawable.border);
                     View view = (View) event.getLocalState();
                     if (!droppedOnValidCell && view != plantIcon) {
                         ViewGroup parent = (ViewGroup) view.getParent();
@@ -190,9 +159,9 @@ public class GridActivity extends AppCompatActivity {
             return true;
         }
     }
-    private void irriga(int fk_contenitore, int fk_linea){
-        final String FK_CONTENITORE = ((Integer)fk_contenitore).toString();
-        final String FK_LINEA = ((Integer)fk_linea).toString();
+    private void irriga(){
+        final String FK_CONTENITORE = ((Integer)SharedPrefManager.container.getNumContainer()).toString();
+        final String FK_LINEA = ((Integer) SharedPrefManager.irrigationLine.getNumLine()).toString();
         class RelazioneIrriga extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
@@ -200,7 +169,7 @@ public class GridActivity extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("fk_contenitore", FK_CONTENITORE);
                 params.put("fk_linea", FK_LINEA);
-                return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
+                return requestHandler.sendPostRequest(URLs.URL_IRRIGA, params);
             }
             @Override
             protected void onPreExecute() {
@@ -209,27 +178,40 @@ public class GridActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                Container container = new Container(0);
-                container.addIrrigationLine(SharedPrefManager.irrigationLine);
-                SharedPrefManager.getInstance(getApplicationContext()).setLineInContainer(container, SharedPrefManager.irrigationLine);
+                SharedPrefManager.container.addIrrigationLine(SharedPrefManager.irrigationLine);
+                SharedPrefManager.getInstance(getApplicationContext()).setLineInContainer(SharedPrefManager.container, SharedPrefManager.irrigationLine);
             }
         }
         RelazioneIrriga ri = new RelazioneIrriga();
         ri.execute();
     }
-/*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                // Estrai il valore dalla Intent data
-                cropID = data.getIntExtra("cropInt", 0);
+    private void dispone(PlantPot plantPot){
+        final String FK_LINEA = ((Integer) SharedPrefManager.irrigationLine.getNumLine()).toString();
+        final String FK_POSTO = ((Integer)plantPot.getNumPlace()).toString();
+        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+            @Override
+            protected String doInBackground(Void... voids) {
+                RequestHandler requestHandler = new RequestHandler();
+                HashMap<String, String> params = new HashMap<>();
+                params.put("fk_linea", FK_LINEA);
+                params.put("fk_posto", FK_POSTO);
+                return requestHandler.sendPostRequest(URLs.URL_DISPONE, params);
+            }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
             }
         }
+        RelazioneDispone rd = new RelazioneDispone();
+        rd.execute();
     }
-*/
+
 
 }
 
