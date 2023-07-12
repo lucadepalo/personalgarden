@@ -134,14 +134,14 @@ public class SetCropActivity extends AppCompatActivity {
     }
     private void assegnata(PlantPot plantPot, int fk_specie) {
         final String FK_POSTO = ((Integer) plantPot.getNumPlace()).toString();
-        final String FK_SPECIE =((Integer) fk_specie).toString();
+        final String FK_SPECIE = ((Integer) fk_specie).toString();
         class RelazioneDispone extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
                 params.put("fk_posto", FK_POSTO);
-                params.put("fk_linea", FK_SPECIE);
+                params.put("fk_specie", FK_SPECIE);
 
                 return requestHandler.sendPostRequest(URLs.URL_ASSEGNATA, params);
             }
