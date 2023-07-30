@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/textViewWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Benvenuto!"
+        android:textAlignment="center"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:textSize="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextUsername"
@@ -16,19 +28,19 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="97dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/border"
+        android:elegantTextHeight="true"
         android:hint="Username"
         android:inputType="text"
         android:minHeight="48dp"
+        android:textAlignment="center"
+        android:textColor="@color/cardview_dark_background"
+        android:textColorHint="@color/cardview_dark_background"
+        android:textCursorDrawable="@drawable/cursor_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/border"
-        android:textCursorDrawable="@drawable/cursor_color"
-        android:textColor="@color/cardview_dark_background"
-        android:textColorHint="@color/cardview_dark_background"
-        android:textAlignment="center"
-        android:elegantTextHeight="true"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextEmail"
@@ -37,18 +49,18 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/border"
+        android:elegantTextHeight="true"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUsername"
-        android:background="@drawable/border"
-        android:textCursorDrawable="@drawable/cursor_color"
+        android:textAlignment="center"
         android:textColor="@color/cardview_dark_background"
         android:textColorHint="@color/cardview_dark_background"
-        android:textAlignment="center"
-        android:elegantTextHeight="true"/>
+        android:textCursorDrawable="@drawable/cursor_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextUsername" />
 
     <EditText
         android:id="@+id/editTextNome"
@@ -57,18 +69,18 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/border"
+        android:elegantTextHeight="true"
         android:hint="Nome"
         android:inputType="text"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
-        android:background="@drawable/border"
-        android:textCursorDrawable="@drawable/cursor_color"
+        android:textAlignment="center"
         android:textColor="@color/cardview_dark_background"
         android:textColorHint="@color/cardview_dark_background"
-        android:textAlignment="center"
-        android:elegantTextHeight="true"/>
+        android:textCursorDrawable="@drawable/cursor_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
 
     <EditText
         android:id="@+id/editTextCognome"
@@ -77,18 +89,18 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/border"
+        android:elegantTextHeight="true"
         android:hint="Cognome"
         android:inputType="text"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNome"
-        android:background="@drawable/border"
-        android:textCursorDrawable="@drawable/cursor_color"
+        android:textAlignment="center"
         android:textColor="@color/cardview_dark_background"
         android:textColorHint="@color/cardview_dark_background"
-        android:textAlignment="center"
-        android:elegantTextHeight="true"/>
+        android:textCursorDrawable="@drawable/cursor_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextNome" />
 
     <EditText
         android:id="@+id/editTextPassword"
@@ -97,19 +109,19 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/border"
+        android:elegantTextHeight="true"
         android:fontFamily="sans-serif"
         android:hint="Password"
         android:inputType="textPassword"
         android:minHeight="48dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCognome"
-        android:background="@drawable/border"
-        android:textCursorDrawable="@drawable/cursor_color"
+        android:textAlignment="center"
         android:textColor="@color/cardview_dark_background"
         android:textColorHint="@color/cardview_dark_background"
-        android:textAlignment="center"
-        android:elegantTextHeight="true"/>
+        android:textCursorDrawable="@drawable/cursor_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextCognome" />
 
     <Button
         android:id="@+id/buttonRegister"
@@ -119,10 +131,10 @@
         android:layout_marginStart="9dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="9dp"
+        android:background="@drawable/filled"
         android:text="CREA ACCOUNT"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/filled"
         app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
     <TextView
@@ -150,5 +162,6 @@
         app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

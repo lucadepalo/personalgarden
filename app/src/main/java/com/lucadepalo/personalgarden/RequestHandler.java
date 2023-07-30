@@ -84,70 +84,6 @@ public class RequestHandler {
         return result.toString();
     }
 
-    // Method to send a GET request to the server
-    public static String sendGetRequest(String requestURL) {
-        URL url;
-
-        StringBuilder sb = new StringBuilder();
-        try {
-            url = new URL(requestURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-            int responseCode = conn.getResponseCode();
-
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                sb = new StringBuilder();
-                String response;
-
-                while ((response = br.readLine()) != null) {
-                    sb.append(response);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
-    }
-
-    public static String sendParamGetRequest(String requestURL, String parameterName, String parameterValue) {
-        URL url;
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            // Costruire l'URL di richiesta includendo il parametro
-            String requestUrlWithParams = requestURL + "?" + parameterName + "=" + URLEncoder.encode(parameterValue, "UTF-8");
-            url = new URL(requestUrlWithParams);
-
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setDoInput(true);
-
-            int responseCode = conn.getResponseCode();
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                String response;
-
-                while ((response = br.readLine()) != null) {
-                    sb.append(response);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return sb.toString();
-    }
-
-
 
     // Method to convert the JSON string response into a HashMap
     public static HashMap<Integer, String> parseJsonToHashMap(String jsonString) {
@@ -165,8 +101,6 @@ public class RequestHandler {
                     String key = keys.next();
                     resultMap.put(Integer.parseInt(key), speciesJson.getString(key));
                 }
-            } else {
-                // Gestisci l'errore in base alle tue esigenze
             }
         } catch (JSONException e) {
             e.printStackTrace();
