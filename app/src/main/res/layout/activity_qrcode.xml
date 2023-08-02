@@ -7,29 +7,47 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <TextView
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:elegantTextHeight="true"
-        android:lineHeight="20dp"
+        android:layout_width="380dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="22dp"
         android:text="Nella confezione troverai due codici QR, uno per il sensore di umidità e uno per il relè attuatore. Premi il tasto INQUADRA QR qui sotto, si aprirà la fotocamera e potrai inquadrare uno dei due codici QR che hai trovato. Se la registrazione del codice è andata a buon fine, tornerai a questa schermata, dove potrai inquadrare il secondo codice rimasto e completare la configurazione."
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/gifImageView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/scanBtn"
         style="@style/Widget.AppCompat.Button.Colored"
-        android:background="@drawable/filled"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="124dp"
         android:layout_marginEnd="10dp"
+        android:background="@drawable/scanbutton"
         android:text="Inquadra QR"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.522"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <ImageView
+        android:id="@+id/gifImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginBottom="90dp"
+        android:background="@drawable/scan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -37,11 +55,11 @@
         android:id="@+id/textContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="52dp"
         android:text="Qui apparirà il codice rilevato:\n"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scanBtn" />
-
+        app:layout_constraintTop_toBottomOf="@+id/gifImageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
