@@ -8,18 +8,18 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:elegantTextHeight="true"
         android:includeFontPadding="true"
         android:padding="6dp"
         android:paddingStart="6dp"
         android:text="Ecco un elenco delle colture consigliate in base alla loro sinergia con
-le piante vicine. Questo assicurerà che le tue piante crescano al meglio beneficiandosi a vicenda."
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+le piante vicine. Questo assicurerà che le tue piante crescano al meglio beneficiandosi a vicenda.\n"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout

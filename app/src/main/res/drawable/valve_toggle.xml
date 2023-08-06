@@ -3,9 +3,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_checked="false"
-        android:drawable="@drawable/closed_faucet_dark"/>
+        android:drawable="@drawable/water_off"/>
 
     <item android:state_checked="true"
-        android:drawable="@drawable/open_faucet_dark"/>
+        android:drawable="@drawable/water_on"/>
 
 </selector>

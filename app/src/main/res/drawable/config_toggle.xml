@@ -3,9 +3,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_checked="false"
-        android:drawable="@drawable/play"/>
+        android:drawable="@drawable/checked"/>
 
     <item android:state_checked="true"
-        android:drawable="@drawable/pause"/>
+        android:drawable="@drawable/settings"/>
 
 </selector>
+

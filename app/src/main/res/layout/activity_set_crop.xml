@@ -8,17 +8,18 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:elegantTextHeight="true"
         android:includeFontPadding="true"
         android:padding="6dp"
         android:paddingStart="6dp"
-        android:text="Ecco un elenco delle colture che puoi piantare. Seleziona la specie che desideri piantare in questo vaso:"
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Ecco un elenco delle colture che puoi piantare. Seleziona la specie che desideri piantare in questo vaso:\n"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
