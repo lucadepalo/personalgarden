@@ -1,29 +1,39 @@
 package com.lucadepalo.personalgarden;
-import androidx.appcompat.app.AppCompatActivity;
-import android.app.Activity;
+
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextPaint;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.HashMap;
-public class GridActivity extends AppCompatActivity implements View.OnClickListener {
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
+public class GridActivity extends AppCompatActivity {
     private ImageView plantIcon, trashIcon;
     private GridLayout gridLayout;
     private FrameLayout[] cells = new FrameLayout[8];
     private int plantNumber = 0;
     private PlantPot[] pots = new PlantPot[8];
-    private Button button;
+
+    private ToggleButton configToggle, cloudToggle, waterToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +42,22 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
         plantIcon.setTag(0);
         trashIcon = findViewById(R.id.trash_icon);
         gridLayout = findViewById(R.id.grid_layout);
-        button = findViewById((R.id.button_set));
-        button.setOnClickListener(this);
+        //button = findViewById((R.id.button_set));
+        //button.setOnClickListener(this);
+        configToggle = findViewById(R.id.configToggle);
+        configToggle.setOnCheckedChangeListener(new ToggleButtonListener());
+        cloudToggle = findViewById(R.id.cloudToggle);
+        cloudToggle.setOnCheckedChangeListener(new ToggleButtonListener());
+        waterToggle = findViewById(R.id.waterToggle);
+        waterToggle.setOnCheckedChangeListener(new ToggleButtonListener());
         for (int i = 0; i < cells.length; i++) {
             int resourceId = getResources().getIdentifier("cell" + (i + 1), "id", getPackageName());
             cells[i] = findViewById(resourceId);
-            cells[i].setTag(i+1);
+            cells[i].setTag(i + 1);
         }
-        for(int i = 0; i < pots.length; i++) {
+        for (int i = 0; i < pots.length; i++) {
             pots[i] = new PlantPot(GridActivity.this);
-            pots[i].setPotID(i+1);
+            pots[i].setPotID(i + 1);
         }
         plantIcon.setOnTouchListener(new MyTouchListener());
         //gridLayout.setOnDragListener(new MyDragListener());
@@ -52,11 +68,11 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
                     case DragEvent.ACTION_DRAG_STARTED:
                         break;
                     case DragEvent.ACTION_DRAG_ENTERED:
-                            v.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+                        v.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
                         break;
                     case DragEvent.ACTION_DRAG_EXITED:
                     case DragEvent.ACTION_DRAG_ENDED:
-                        v.setBackground(getDrawable(R.drawable.filled));
+                        v.setBackground(getDrawable(R.drawable.border));
                         break;
                     case DragEvent.ACTION_DROP:
                         View view = (View) event.getLocalState();
@@ -76,16 +92,13 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
         for (FrameLayout cell : cells) {
             cell.setOnDragListener(new MyDragListener());
         }
+
+
+        if (!SharedPrefManager.getInstance(this).haveTipsBeenShown()) {
+            showFirstTip();
+        }
     }
 
-    @Override
-    public void onClick(View v) {
-        for(int i = 0; i<pots.length; i++) {
-            dispone(pots[i]);
-            Log.d("PlantPotInfo", "PotID: " + pots[i].getPotID() + ", NumPlace: " + pots[i].getNumPlace() + ", CropID: " + pots[i].getCropID());
-        }
-        irriga();
-    }
 
     private static final class MyTouchListener implements View.OnTouchListener {
         @Override
@@ -210,6 +223,78 @@ public class GridActivity extends AppCompatActivity implements View.OnClickListe
         }
         RelazioneDispone rd = new RelazioneDispone();
         rd.execute();
+    }
+
+    private class ToggleButtonListener implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                switch (buttonView.getId()) {
+                    case R.id.configToggle:
+                        for(int i = 0; i<pots.length; i++) {
+                            dispone(pots[i]);
+                            plantIcon.setVisibility(View.INVISIBLE);
+                            trashIcon.setVisibility(View.INVISIBLE);
+                        }
+                        irriga();
+                        break;
+                    case R.id.cloudToggle:
+
+                        break;
+                    case R.id.waterToggle:
+
+                        break;
+                }
+            } else {
+                switch (buttonView.getId()) {
+                    case R.id.configToggle:
+                        plantIcon.setVisibility(View.VISIBLE);
+                        trashIcon.setVisibility(View.VISIBLE);
+                        break;
+                    case R.id.cloudToggle:
+
+                        break;
+                    case R.id.waterToggle:
+
+                        break;
+                }
+            }
+        }
+    }
+
+    private void showFirstTip() {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // mezzo secondo tra ogni showcase view
+
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
+
+        sequence.setConfig(config);
+
+        sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
+                .setTarget(findViewById(R.id.configToggle))
+                .setDismissText("AVANTI")
+                .setContentText("CONFIGURAZIONE DELL'ORTO: Per aggiungere un vaso all'orto, trascina l'icona del vaso nella posizione che preferisci. Per eliminarlo, trascinalo nel cestino. Per scambiare due vasi, trascinali uno sull'altro. Quando sei soddisfatto dell'orto premi la spunta di conferma. Per tornare alla configurazione premi il tasto impostazioni.")
+                .build()
+        );
+
+        sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
+                .setTarget(findViewById(R.id.cloudToggle))
+                .setDismissText("AVANTI")
+                .setContentText("IRRIGAZIONE SMART: Questo tasto mostra lo stato del servizio di irrigazione smart. Tocca play per lasciare che il tuo orto venga automaticamente irrigato solo quando c'è bisogno. Tocca pausa per fermare il servizio smart e passare alla modalità manuale.")
+                .build()
+        );
+
+        sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
+                .setTarget(findViewById(R.id.waterToggle))
+                .setDismissText("CAPITO!")
+                .setContentText("IRRIGAZIONE MANUALE: Questo tasto mostra lo stato della valvola di irrigazione. Tocca la goccia per aprire manualmente la valvola, tocca la goccia barrata per chiuderla. Ricorda che quando usi questo interruttore passi alla modalità di irrigazione manuale.")
+                .build()
+        );
+
+        sequence.start();
+
+        // Segna come mostrati
+        SharedPrefManager.getInstance(GridActivity.this).markTipsAsShown();
     }
 
 

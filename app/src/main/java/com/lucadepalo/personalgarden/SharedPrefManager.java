@@ -23,7 +23,7 @@ public class SharedPrefManager {
     private static final String FK_SPECIE = "fk_specie";
     private static SharedPrefManager mInstance;
     private static Context mCtx;
-
+    private static final String KEY_TIPS_SHOWN = "keyTipsShown";
     public static Container container = new Container(0);
     public static IrrigationLine irrigationLine = new IrrigationLine(0);
 
@@ -108,7 +108,6 @@ public class SharedPrefManager {
         );
     }
 
-    //this method will logout the user
     public void logout() {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -116,4 +115,17 @@ public class SharedPrefManager {
         editor.apply();
         mCtx.startActivity(new Intent(mCtx, LoginActivity.class));
     }
+
+    public boolean haveTipsBeenShown() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(KEY_TIPS_SHOWN, false);
+    }
+
+    public void markTipsAsShown() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(KEY_TIPS_SHOWN, true);
+        editor.apply();
+    }
+
 }
