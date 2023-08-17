@@ -24,6 +24,7 @@ public class SharedPrefManager {
     private static SharedPrefManager mInstance;
     private static Context mCtx;
     private static final String KEY_TIPS_SHOWN = "keyTipsShown";
+    private static String FK_NODO_IOT = "";
     public static Container container = new Container(0);
     public static IrrigationLine irrigationLine = new IrrigationLine(0);
 
@@ -128,4 +129,15 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    public void setFK(String fk) {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(FK_NODO_IOT, fk);
+        editor.apply();
+    }
+
+    public String getFK() {
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(FK_NODO_IOT, FK_NODO_IOT);
+    }
 }

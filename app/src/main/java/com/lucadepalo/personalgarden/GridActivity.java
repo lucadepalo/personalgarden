@@ -2,6 +2,7 @@ package com.lucadepalo.personalgarden;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -32,7 +33,8 @@ public class GridActivity extends AppCompatActivity {
     private FrameLayout[] cells = new FrameLayout[8];
     private int plantNumber = 0;
     private PlantPot[] pots = new PlantPot[8];
-
+    private static final Boolean APERTO = true, CHIUSO = false;
+    private static final String MAN_PRIORITY = "1", AUTO_PRIORITY ="0", OPEN = "A", CLOSED = "C";
     private ToggleButton configToggle, cloudToggle, waterToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -242,7 +244,7 @@ public class GridActivity extends AppCompatActivity {
 
                         break;
                     case R.id.waterToggle:
-
+                        setManualIrrigation(CHIUSO);
                         break;
                 }
             } else {
@@ -255,7 +257,7 @@ public class GridActivity extends AppCompatActivity {
 
                         break;
                     case R.id.waterToggle:
-
+                        setManualIrrigation(APERTO);
                         break;
                 }
             }
@@ -295,6 +297,42 @@ public class GridActivity extends AppCompatActivity {
 
         // Segna come mostrati
         SharedPrefManager.getInstance(GridActivity.this).markTipsAsShown();
+    }
+
+    private void setManualIrrigation(Boolean valveOpen){
+        final String FK = SharedPrefManager.getInstance(getApplicationContext()).getFK();
+
+        class OpenManualIrrigation extends AsyncTask<Void, Void, String> {
+
+            @Override
+            protected String doInBackground(Void... voids) {
+                RequestHandler requestHandler = new RequestHandler();
+                HashMap<String, String> params = new HashMap<>();
+
+                params.put("fk_nodo_iot", FK);
+                params.put("priorita", MAN_PRIORITY);
+
+                if(valveOpen){
+                    params.put("valore", OPEN);
+                } else {
+                    params.put("valore", CLOSED);
+                }
+
+                return requestHandler.sendPostRequest(URLs.URL_IRRIG_MANUALE, params);
+            }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //Node node = new Node(AIRR, SUT);
+                //SharedPrefManager.getInstance(getApplicationContext()).qrRegistration(node);
+            }
+        }
+        OpenManualIrrigation open = new OpenManualIrrigation();
+        open.execute();
     }
 
 

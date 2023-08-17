@@ -24,6 +24,11 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     ImageView gifImageView;
     String temp = "", qrSUT = "", qrAIRR = "", prefS = "SUT", prefA = "AIRR";
 
+    ///*
+    private static final String ACT_TYPE = "elettrovalvolaIrrigazione", SENSOR_TYPE = "umiditaTerreno";
+    private static final Integer VAL_MIN = 300, VAL_MAX = 900;
+    //*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,8 +109,16 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
+
                 params.put("qrSUT", SUT);
                 params.put("qrAIRR", AIRR);
+
+            ///*
+                params.put("ActType", ACT_TYPE);
+                params.put("SensorType", SENSOR_TYPE);
+                params.put("MinSUT", String.valueOf(VAL_MIN));
+                params.put("MaxSUT", String.valueOf(VAL_MAX));
+            //*/
 
                 return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
             }
@@ -117,10 +130,13 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 Node node = new Node(AIRR, SUT);
+                SharedPrefManager.getInstance(getApplicationContext()).setFK(AIRR);
                 SharedPrefManager.getInstance(getApplicationContext()).qrRegistration(node);
             }
         }
         RegisterCodes rc = new RegisterCodes();
         rc.execute();
     }
+
+
 }
