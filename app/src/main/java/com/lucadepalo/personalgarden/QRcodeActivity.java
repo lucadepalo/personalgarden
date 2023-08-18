@@ -25,8 +25,7 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     String temp = "", qrSUT = "", qrAIRR = "", prefS = "SUT", prefA = "AIRR";
 
     ///*
-    private static final String ACT_TYPE = "elettrovalvolaIrrigazione", SENSOR_TYPE = "umiditaTerreno";
-    private static final Integer VAL_MIN = 300, VAL_MAX = 900;
+    private static final String ACT_TYPE = "elettrovalvolaIrrigazione", SENSOR_TYPE = "umiditaTerreno", VAL_MIN = "300", VAL_MAX = "900";
     //*/
 
     @Override
@@ -116,8 +115,8 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
             ///*
                 params.put("ActType", ACT_TYPE);
                 params.put("SensorType", SENSOR_TYPE);
-                params.put("MinSUT", String.valueOf(VAL_MIN));
-                params.put("MaxSUT", String.valueOf(VAL_MAX));
+                params.put("MinSUT", VAL_MIN);
+                params.put("MaxSUT", VAL_MAX);
             //*/
 
                 return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);

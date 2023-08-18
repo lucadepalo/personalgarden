@@ -2,19 +2,15 @@ package com.lucadepalo.personalgarden;
 
 import android.content.ClipData;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -29,12 +25,10 @@ import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class GridActivity extends AppCompatActivity {
     private ImageView plantIcon, trashIcon;
-    private GridLayout gridLayout;
     private FrameLayout[] cells = new FrameLayout[8];
     private int plantNumber = 0;
     private PlantPot[] pots = new PlantPot[8];
-    private static final Boolean APERTO = true, CHIUSO = false;
-    private static final String MAN_PRIORITY = "1", AUTO_PRIORITY ="0", OPEN = "A", CLOSED = "C";
+    private static final String PRIORITY_MANUAL = "1", PRIORITY_AUTO ="0", STATE_OPEN = "A", STATE_CLOSED = "C";
     private ToggleButton configToggle, cloudToggle, waterToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +37,7 @@ public class GridActivity extends AppCompatActivity {
         plantIcon = findViewById(R.id.plant_pot_icon);
         plantIcon.setTag(0);
         trashIcon = findViewById(R.id.trash_icon);
-        gridLayout = findViewById(R.id.grid_layout);
+
         //button = findViewById((R.id.button_set));
         //button.setOnClickListener(this);
         configToggle = findViewById(R.id.configToggle);
@@ -97,7 +91,7 @@ public class GridActivity extends AppCompatActivity {
 
 
         if (!SharedPrefManager.getInstance(this).haveTipsBeenShown()) {
-            showFirstTip();
+            showTutorial();
         }
     }
 
@@ -241,10 +235,10 @@ public class GridActivity extends AppCompatActivity {
                         irriga();
                         break;
                     case R.id.cloudToggle:
-
+                        setIrrigationControl(false, false);
                         break;
                     case R.id.waterToggle:
-                        setManualIrrigation(CHIUSO);
+                        setIrrigationControl(true, false);
                         break;
                 }
             } else {
@@ -254,17 +248,17 @@ public class GridActivity extends AppCompatActivity {
                         trashIcon.setVisibility(View.VISIBLE);
                         break;
                     case R.id.cloudToggle:
-
+                        setIrrigationControl(false, false);
                         break;
                     case R.id.waterToggle:
-                        setManualIrrigation(APERTO);
+                        setIrrigationControl(true, true);
                         break;
                 }
             }
         }
     }
 
-    private void showFirstTip() {
+    private void showTutorial() {
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // mezzo secondo tra ogni showcase view
 
@@ -274,21 +268,21 @@ public class GridActivity extends AppCompatActivity {
 
         sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
                 .setTarget(findViewById(R.id.configToggle))
-                .setDismissText("AVANTI")
+                .setDismissText("\nAVANTI")
                 .setContentText("CONFIGURAZIONE DELL'ORTO: Per aggiungere un vaso all'orto, trascina l'icona del vaso nella posizione che preferisci. Per eliminarlo, trascinalo nel cestino. Per scambiare due vasi, trascinali uno sull'altro. Quando sei soddisfatto dell'orto premi la spunta di conferma. Per tornare alla configurazione premi il tasto impostazioni.")
                 .build()
         );
 
         sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
                 .setTarget(findViewById(R.id.cloudToggle))
-                .setDismissText("AVANTI")
+                .setDismissText("\nAVANTI")
                 .setContentText("IRRIGAZIONE SMART: Questo tasto mostra lo stato del servizio di irrigazione smart. Tocca play per lasciare che il tuo orto venga automaticamente irrigato solo quando c'è bisogno. Tocca pausa per fermare il servizio smart e passare alla modalità manuale.")
                 .build()
         );
 
         sequence.addSequenceItem(new MaterialShowcaseView.Builder(this)
                 .setTarget(findViewById(R.id.waterToggle))
-                .setDismissText("CAPITO!")
+                .setDismissText("\nCAPITO!")
                 .setContentText("IRRIGAZIONE MANUALE: Questo tasto mostra lo stato della valvola di irrigazione. Tocca la goccia per aprire manualmente la valvola, tocca la goccia barrata per chiuderla. Ricorda che quando usi questo interruttore passi alla modalità di irrigazione manuale.")
                 .build()
         );
@@ -299,10 +293,10 @@ public class GridActivity extends AppCompatActivity {
         SharedPrefManager.getInstance(GridActivity.this).markTipsAsShown();
     }
 
-    private void setManualIrrigation(Boolean valveOpen){
+    private void setIrrigationControl(Boolean isManual, Boolean isOpen){
         final String FK = SharedPrefManager.getInstance(getApplicationContext()).getFK();
 
-        class OpenManualIrrigation extends AsyncTask<Void, Void, String> {
+        class IrrigationControl extends AsyncTask<Void, Void, String> {
 
             @Override
             protected String doInBackground(Void... voids) {
@@ -310,15 +304,14 @@ public class GridActivity extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
 
                 params.put("fk_nodo_iot", FK);
-                params.put("priorita", MAN_PRIORITY);
 
-                if(valveOpen){
-                    params.put("valore", OPEN);
-                } else {
-                    params.put("valore", CLOSED);
-                }
+                if (isManual) params.put("priorita", PRIORITY_MANUAL);
+                else params.put("priorita", PRIORITY_AUTO);
 
-                return requestHandler.sendPostRequest(URLs.URL_IRRIG_MANUALE, params);
+                if (isOpen) params.put("valore", STATE_OPEN);
+                else params.put("valore", STATE_CLOSED);
+
+                return requestHandler.sendPostRequest(URLs.URL_STATO, params);
             }
             @Override
             protected void onPreExecute() {
@@ -331,10 +324,8 @@ public class GridActivity extends AppCompatActivity {
                 //SharedPrefManager.getInstance(getApplicationContext()).qrRegistration(node);
             }
         }
-        OpenManualIrrigation open = new OpenManualIrrigation();
-        open.execute();
+        IrrigationControl irrctl = new IrrigationControl();
+        irrctl.execute();
     }
-
-
 }
 
