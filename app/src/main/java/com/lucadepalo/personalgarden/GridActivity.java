@@ -30,6 +30,7 @@ public class GridActivity extends AppCompatActivity {
     private PlantPot[] pots = new PlantPot[8];
     private static final String PRIORITY_MANUAL = "1", PRIORITY_AUTO ="0", STATE_OPEN = "A", STATE_CLOSED = "C";
     private ToggleButton configToggle, cloudToggle, waterToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,7 +239,8 @@ public class GridActivity extends AppCompatActivity {
                         setIrrigationControl(false, false);
                         break;
                     case R.id.waterToggle:
-                        setIrrigationControl(true, false);
+                        setIrrigationControl(true, true);
+
                         break;
                 }
             } else {
@@ -248,10 +250,8 @@ public class GridActivity extends AppCompatActivity {
                         trashIcon.setVisibility(View.VISIBLE);
                         break;
                     case R.id.cloudToggle:
-                        setIrrigationControl(false, false);
-                        break;
                     case R.id.waterToggle:
-                        setIrrigationControl(true, true);
+                        setIrrigationControl(true, false);
                         break;
                 }
             }
