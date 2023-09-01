@@ -24,10 +24,6 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     ImageView gifImageView;
     String temp = "", qrSUT = "", qrAIRR = "", prefS = "SUT", prefA = "AIRR";
 
-    ///*
-    private static final String ACT_TYPE = "elettrovalvolaIrrigazione", SENSOR_TYPE = "umiditaTerreno", VAL_MIN = "300", VAL_MAX = "900";
-    //*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,13 +107,6 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
 
                 params.put("qrSUT", SUT);
                 params.put("qrAIRR", AIRR);
-
-            ///*
-                params.put("ActType", ACT_TYPE);
-                params.put("SensorType", SENSOR_TYPE);
-                params.put("MinSUT", VAL_MIN);
-                params.put("MaxSUT", VAL_MAX);
-            //*/
 
                 return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
             }
