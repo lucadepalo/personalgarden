@@ -30,9 +30,7 @@ dependencies {
 
     implementation "com.journeyapps:zxing-android-embedded:4.1.0"
 
-    //implementation files('libs\\DraggableGridView.jar')
     implementation 'com.github.deano2390:MaterialShowcaseView:1.3.7@aar'
-    //compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

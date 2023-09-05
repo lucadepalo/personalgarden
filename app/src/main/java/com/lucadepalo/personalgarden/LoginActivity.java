@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 //open register screen
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
             }
         });
     }

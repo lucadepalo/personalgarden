@@ -3,12 +3,7 @@ package com.lucadepalo.personalgarden;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -19,15 +14,22 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * Questa classe gestisce le richieste HTTP per l'applicazione.
+ */
 public class RequestHandler {
 
-
-    //this method will send a post request to the specified url
-    //in this app we are using only post request
-    //in the hashmap we have the data to be sent to the server in keyvalue pairs
+    /**
+     * Questo metodo invia una richiesta POST all'URL specificato.
+     * Nell'app si utilizza solo il metodo POST.
+     * Il hashmap contiene i dati da inviare al server sotto forma di coppie chiave-valore.
+     *
+     * @param requestURL     L'URL a cui inviare la richiesta.
+     * @param postDataParams I dati da inviare.
+     * @return Una stringa contenente la risposta del server.
+     */
     public String sendPostRequest(String requestURL, HashMap<String, String> postDataParams) {
         URL url;
-
         StringBuilder sb = new StringBuilder();
         try {
             url = new URL(requestURL);
@@ -39,22 +41,19 @@ public class RequestHandler {
             conn.setDoOutput(true);
 
             OutputStream os = conn.getOutputStream();
-
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             writer.write(getPostDataString(postDataParams));
 
             writer.flush();
             writer.close();
             os.close();
+
             int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
-
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 sb = new StringBuilder();
                 String response;
-
                 while ((response = br.readLine()) != null) {
                     sb.append(response);
                 }
@@ -66,15 +65,19 @@ public class RequestHandler {
         return sb.toString();
     }
 
-    //this method is converting keyvalue pairs data into a query string as needed to send to the server
+    /**
+     * Questo metodo converte i dati in coppie chiave-valore in una stringa di query come richiesto per l'invio al server.
+     *
+     * @param params I dati da convertire.
+     * @return Una stringa di query.
+     * @throws UnsupportedEncodingException Se l'encoding non è supportato.
+     */
     private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
+            if (first) first = false;
+            else result.append("&");
 
             result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
             result.append("=");
@@ -84,8 +87,12 @@ public class RequestHandler {
         return result.toString();
     }
 
-
-    // Method to convert the JSON string response into a HashMap
+    /**
+     * Questo metodo converte la risposta JSON in un HashMap.
+     *
+     * @param jsonString La stringa JSON da analizzare.
+     * @return Un HashMap contenente i dati estratti dalla stringa JSON.
+     */
     public static HashMap<Integer, String> parseJsonToHashMap(String jsonString) {
         HashMap<Integer, String> resultMap = new HashMap<>();
         try {

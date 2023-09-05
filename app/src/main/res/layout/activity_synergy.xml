@@ -63,9 +63,9 @@ le piante vicine. Questo assicurerà che le tue piante crescano al meglio benefi
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="343dp"
-        android:layout_height="527dp"
-        android:layout_marginTop="117dp"
+        android:layout_width="347dp"
+        android:layout_height="450dp"
+        android:layout_marginTop="212dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

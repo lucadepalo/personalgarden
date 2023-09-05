@@ -16,8 +16,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+/**
+ * Questa classe rappresenta l'attività di registrazione dell'applicazione,
+ * dove gli utenti possono creare un nuovo account.
+ */
+public class RegisterActivity extends AppCompatActivity {
 
+    // Definizione degli attributi per i campi di testo
     EditText editTextUsername, editTextEmail, editTextPassword, editTextNome, editTextCognome;
 
     @Override
@@ -25,51 +30,52 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //if the user is already logged in we will directly start the qr airr scan activity
+        // Controllo per verificare se l'utente è già loggato per poter iniziare l'attività di scansione dei QR
         if (SharedPrefManager.getInstance(this).isLoggedIn()) {
             finish();
             startActivity(new Intent(this, QRcodeActivity.class));
             return;
         }
-
+        // Collegamento degli attributi con i campi di testo editabili nella UI
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
         editTextNome = (EditText) findViewById(R.id.editTextNome);
         editTextCognome = (EditText) findViewById(R.id.editTextCognome);
 
-
+        // Listener per il pulsante di registrazione
         findViewById(R.id.buttonRegister).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if user pressed on button register
-                //here we will register the user to server
+                //al click dell'utente si avvia la registrazione sul server
                 registerUser();
             }
         });
 
+        // Listener per il testo di login
         findViewById(R.id.textViewLogin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if user pressed on login
-                //we will open the login screen
+                //al click dell'utente si abbandona la registrazione e si passa al login
                 finish();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
 
     }
-
+    /**
+     * Metodo che gestisce la registrazione dell'utente.
+     */
     private void registerUser() {
+        //i campi raccolti nelle caselle di testo sono ripuliti e resi final
         final String username = editTextUsername.getText().toString().trim();
         final String email = editTextEmail.getText().toString().trim();
         final String password = editTextPassword.getText().toString().trim();
-
         final String nome = editTextNome.getText().toString().trim();
         final String cognome = editTextCognome.getText().toString().trim();
 
-
-        //first we will do the validations
+        //validazione degli input nei campi di testo
+        //in caso di errore esso viene comunicato all'utente per essere corretto
 
         if (TextUtils.isEmpty(username)) {
             editTextUsername.setError("Per favore inserisci un username");
@@ -107,18 +113,23 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //if it passes all the validations
+        //se tutti i campi sono validi si procede con la registrazione
 
+        /**
+         * Sottoclasse AsyncTask per gestire la registrazione sul server.
+         */
         class RegisterUser extends AsyncTask<Void, Void, String> {
 
+            // Barra di avanzamento per indicare il progresso della registrazione
+            //data la velocità di esecuzione in realtà è visibile solo se qualcosa è andato storto e rimane in attesa
             private ProgressBar progressBar;
 
             @Override
             protected String doInBackground(Void... voids) {
-                //creating request handler object
+                // Creazione di un oggetto RequestHandler
                 RequestHandler requestHandler = new RequestHandler();
 
-                //creating request parameters
+                //Creazione dei parametri della richiesta
                 HashMap<String, String> params = new HashMap<>();
                 params.put("username", username);
                 params.put("email", email);
@@ -126,10 +137,11 @@ public class MainActivity extends AppCompatActivity {
                 params.put("nome", nome);
                 params.put("cognome", cognome);
 
-                //returning the response
+                //Invio della richiesta e ritorno della risposta
                 return requestHandler.sendPostRequest(URLs.URL_REGISTER, params);
             }
 
+            //prima dell'esecuzione la progressBar viene resa visibile
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -138,24 +150,24 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
             }
 
+
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                //hiding the progressbar after completion
+                //dopo l'esecuzione la progressBar viene nascosta
                 progressBar.setVisibility(View.GONE);
-
                 try {
-                    //converting response to json object
+                    //conversione della risposta in oggetto JSON
                     JSONObject obj = new JSONObject(s);
 
-                    //if no error in response
+                    //se non c'è alcun errore nella risposta
                     if (!obj.getBoolean("error")) {
                         Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
 
-                        //getting the user from the response
+                        //estrae l'oggetto user dalla risposta
                         JSONObject userJson = obj.getJSONObject("user");
 
-                        //creating a new user object
+                        //crea un nuovo oggetto user
                         User user = new User(
                                 userJson.getInt("id"),
                                 userJson.getString("username"),
@@ -164,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
                                 userJson.getString("cognome")
                         );
 
-                        //storing the user in shared preferences
+                        //memorizza l'user in shared preferences
                         SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        //starting the qr airr scan activity
+                        //inizia la QRscanActivity
                         finish();
                         startActivity(new Intent(getApplicationContext(), QRcodeActivity.class));
                     } else {
@@ -179,7 +191,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //executing the async task
+        /**
+         * esegue il task asincrono
+         * bisogna usare un task asincrono per svincolare le operazioni con il server
+         * dalle operazioni dell'activity in modo da non alterare la corretta esecuzione
+         * */
         RegisterUser ru = new RegisterUser();
         ru.execute();
     }
