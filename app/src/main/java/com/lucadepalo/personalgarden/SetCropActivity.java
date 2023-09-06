@@ -2,15 +2,12 @@ package com.lucadepalo.personalgarden;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -18,12 +15,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
+/**
+ * SetCropActivity permette agli utenti di selezionare una specie di pianta da un elenco
+ * e associarla a un determinato vaso nel sistema.
+ */
 public class SetCropActivity extends AppCompatActivity {
 
     private HashMap<Integer, String> cropList = new HashMap<>();
     private boolean isItemSelected = false;
-    //private Intent intent = getIntent();
     private String topElement = "Seleziona...";
 
     @Override
@@ -34,7 +33,9 @@ public class SetCropActivity extends AppCompatActivity {
         new GetAllCropListTask().execute(URLs.URL_CROPLIST);
 
     }
-
+    /**
+     * AsyncTask che richiede la lista delle specie di piante disponibili dal server.
+     */
     private class GetAllCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
         @Override
         protected HashMap<Integer, String> doInBackground(String... urls) {
@@ -61,7 +62,11 @@ public class SetCropActivity extends AppCompatActivity {
             }
         }
     }
-
+    /**
+     * Popola lo spinner con l'elenco delle specie ricevute dal server.
+     * Questo metodo ordina l'elenco delle specie in ordine alfabetico
+     * e imposta l'elemento selezionato inizialmente come "Seleziona...".
+     */
     private void populateSpinner() {
         Spinner spinner = findViewById(R.id.crop_spinner);
         ArrayList<String> dataList = new ArrayList<>(cropList.values());
@@ -70,9 +75,6 @@ public class SetCropActivity extends AppCompatActivity {
 
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this, dataList);
         spinner.setAdapter(adapter);
-
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                //android.R.layout.simple_spinner_item, dataList);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -89,10 +91,7 @@ public class SetCropActivity extends AppCompatActivity {
                 if (position > 0) {
                     String selectedCrop = parent.getItemAtPosition(position).toString();
                     Toast.makeText(SetCropActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
-                    //Intent returnIntent = new Intent();
                     int cropInt = getKeyByValue(cropList, selectedCrop);
-                    // returnIntent.putExtra("cropInt", cropInt);
-                    // setResult(Activity.RESULT_OK, returnIntent);
                     isItemSelected = true;
                     buttonConfirm.setEnabled(true);
                     findViewById(R.id.button_confirm).setOnClickListener(new View.OnClickListener() {
@@ -123,7 +122,12 @@ public class SetCropActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Restituisce la chiave di una determinata entry in una HashMap data la sua valore.
+     * @param map la HashMap da cercare
+     * @param value il valore dell'entry da cercare
+     * @return la chiave dell'entry, oppure null se il valore non viene trovato
+     */
     public static <T, E> T getKeyByValue(HashMap<T, E> map, E value) {
         for (HashMap.Entry<T, E> entry : map.entrySet()) {
             if (entry.getValue() != null && entry.getValue().equals(value)) {
@@ -132,10 +136,23 @@ public class SetCropActivity extends AppCompatActivity {
         }
         return null;
     }
+
+    /**
+     * Associa una specie di pianta a un vaso nel sistema. Questo metodo
+     * invia una richiesta al server per associare un ID di specie specificato
+     * a un vaso specificato nel sistema.
+     *
+     * @param plantPot il vaso a cui associare la specie
+     * @param fk_specie l'ID della specie da associare
+     */
     private void assegnata(PlantPot plantPot, int fk_specie) {
         final String FK_POSTO = ((Integer) plantPot.getNumPlace()).toString();
         final String FK_SPECIE = ((Integer) fk_specie).toString();
-        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+        /**
+         * Questa classe AsyncTask gestisce la comunicazione con il server
+         * per associare una specie a un vaso nel sistema.
+         */
+        class RelazioneAssegnata extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
@@ -157,7 +174,7 @@ public class SetCropActivity extends AppCompatActivity {
                 SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
             }
         }
-        RelazioneDispone rd = new RelazioneDispone();
+        RelazioneAssegnata rd = new RelazioneAssegnata();
         rd.execute();
     }
 

@@ -16,8 +16,13 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+/**
+ * Questa classe rappresenta l'attività di login dell'applicazione,
+ * dove gli utenti possono accedere al loro account.
+ */
 public class LoginActivity extends AppCompatActivity {
 
+    // Campi di testo per inserire username e password
     EditText editTextUsername, editTextPassword;
 
     @Override
@@ -25,36 +30,39 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Inizializzazione dei campi di testo
         editTextUsername = (EditText) findViewById(R.id.editTextUsername);
         editTextPassword = (EditText) findViewById(R.id.editTextPassword);
 
-
-        //if user presses on login
-        //calling the method login
+        // Listener per il pulsante di login
         findViewById(R.id.buttonLogin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Avvia la procedura di login
                 userLogin();
             }
         });
 
-        //if user presses on not registered
+        // Listener per il testo di registrazione (per gli utenti che non hanno un account)
         findViewById(R.id.textViewRegister).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //open register screen
+                // Avvia l'attività di registrazione
                 finish();
                 startActivity(new Intent(getApplicationContext(), RegisterActivity.class));
             }
         });
     }
 
+    /**
+     * Questo metodo gestisce il login dell'utente presso il server.
+     */
     private void userLogin() {
-        //first getting the values
+        // Ottiene i valori inseriti
         final String username = editTextUsername.getText().toString();
         final String password = editTextPassword.getText().toString();
 
-        //validating inputs
+        // Validazione degli input
         if (TextUtils.isEmpty(username)) {
             editTextUsername.setError("Per favore inserisci il tuo username");
             editTextUsername.requestFocus();
@@ -67,10 +75,13 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        //if everything is fine
 
+        /**
+         * Questa sottoclasse AsyncTask gestisce il login dell'utente presso il server.
+         */
         class UserLogin extends AsyncTask<Void, Void, String> {
 
+            // Barra di avanzamento per mostrare lo stato di login
             ProgressBar progressBar;
 
             @Override
@@ -85,19 +96,18 @@ public class LoginActivity extends AppCompatActivity {
                 super.onPostExecute(s);
                 progressBar.setVisibility(View.GONE);
 
-
                 try {
-                    //converting response to json object
+                    // Converte la risposta in un oggetto JSON
                     JSONObject obj = new JSONObject(s);
 
-                    //if no error in response
+                    // Se non ci sono errori nella risposta
                     if (!obj.getBoolean("error")) {
                         Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
 
-                        //getting the user from the response
+                        // Ottiene l'utente dalla risposta
                         JSONObject userJson = obj.getJSONObject("user");
 
-                        //creating a new user object
+                        // Crea un nuovo oggetto User
                         User user = new User(
                                 userJson.getInt("id"),
                                 userJson.getString("username"),
@@ -106,10 +116,10 @@ public class LoginActivity extends AppCompatActivity {
                                 userJson.getString("cognome")
                         );
 
-                        //storing the user in shared preferences
+                        // Salva l'utente nelle preferenze condivise
                         SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
 
-                        //starting the qr airr scan activity
+                        // Avvia l'attività di scansione QR
                         finish();
                         startActivity(new Intent(getApplicationContext(), QRcodeActivity.class));
                     } else {
@@ -122,19 +132,19 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             protected String doInBackground(Void... voids) {
-                //creating request handler object
+                // Crea un oggetto RequestHandler per gestire la richiesta
                 RequestHandler requestHandler = new RequestHandler();
 
-                //creating request parameters
+                // Crea i parametri della richiesta
                 HashMap<String, String> params = new HashMap<>();
                 params.put("username", username);
                 params.put("password", password);
 
-                //returing the response
+                // Restituisce la risposta del server
                 return requestHandler.sendPostRequest(URLs.URL_LOGIN, params);
             }
         }
-
+        // Se tutto è in ordine, avvia l'AsyncTask per il login
         UserLogin ul = new UserLogin();
         ul.execute();
     }

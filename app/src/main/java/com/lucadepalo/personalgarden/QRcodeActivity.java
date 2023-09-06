@@ -18,7 +18,10 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.HashMap;
 
-public class QRcodeActivity extends AppCompatActivity implements View.OnClickListener{
+/**
+ * Questa classe rappresenta l'attività di scansione del codice QR nell'applicazione.
+ */
+public class QRcodeActivity extends AppCompatActivity implements View.OnClickListener {
     Button scanBtn;
     TextView messageText;
     ImageView gifImageView;
@@ -29,36 +32,32 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrcode);
 
-
-
-
+        // Se l'utente ha già accoppiato i codici, avvia l'attività della griglia
         if (SharedPrefManager.getInstance(this).isCoupled()) {
             finish();
             startActivity(new Intent(this, GridActivity.class));
             return;
         }
 
-        // referencing and initializing
-        // the button and textviews
+        // Inizializzazione dei componenti dell'interfaccia utente
         scanBtn = findViewById(R.id.scanBtn);
         messageText = findViewById(R.id.textContent);
         gifImageView = findViewById(R.id.gifImageView);
-        //messageFormat = findViewById(R.id.textFormat);
 
-        // adding listener to the button
+        // Imposta un listener sul pulsante di scansione
         scanBtn.setOnClickListener(this);
+
+        // Carica l'immagine GIF nella vista dell'immagine
         Glide.with(this).load(R.drawable.scan).into(gifImageView);
     }
 
     @Override
     public void onClick(View v) {
-        // we need to create the object
-        // of IntentIntegrator class
-        // which is the class of QR library
+        // Inizializza lo scanner QR
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.setPrompt("Inquadra il codice QR");
-        intentIntegrator.setOrientationLocked(false);
-        //this ensures that the user can scan only qr codes
+        intentIntegrator.setOrientationLocked(true);
+        // Controlla che il codice scansionato sia un QR e non un altro formato come codici a barre
         intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
         intentIntegrator.initiateScan();
     }
@@ -67,24 +66,27 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        // if the intentResult is null then toast a message as "cancelled"
+
         if (intentResult != null) {
             if (intentResult.getContents() == null) {
                 Toast.makeText(getBaseContext(), "Operazione annullata", Toast.LENGTH_SHORT).show();
             } else {
-                // if the intentResult is not null this sets the content and format of scan message
                 messageText.setText(intentResult.getContents());
                 temp = messageText.getText().toString().trim();
-                // if the SUT qr code hasn't already been scanned AND if the code scanned starts with SUT
+
+                /** Gestione dei codici QR scansionati
+                 *  Questo fa in modo che l'app si accorga di quale codice viene scansionato
+                 *  automaticamente in modo da rendere ininfluente l'ordine che l'utente sceglie
+                 */
                 if (qrSUT.isEmpty() && temp.startsWith(prefS)) {
                     qrSUT = temp;
-                    // if the AIRR qr code hasn't already been scanned AND if the code scanned starts with AIRR
                 } else if (qrAIRR.isEmpty() && temp.startsWith(prefA)) {
                     qrAIRR = temp;
                 }
-                if(!qrSUT.isEmpty()&&!qrAIRR.isEmpty()){
+
+                // Se entrambi i codici QR sono stati scansionati, registra i codici
+                if (!qrSUT.isEmpty() && !qrAIRR.isEmpty()) {
                     registerCodes();
-                    //this calls the next activity that needs to run after everything's done in this
                     startActivity(new Intent(getApplicationContext(), GridActivity.class));
                     finish();
                 }
@@ -94,7 +96,10 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void registerCodes(){
+    /**
+     * Questo metodo gestisce la registrazione dei codici QR scansionati.
+     */
+    private void registerCodes() {
         final String SUT = qrSUT;
         final String AIRR = qrAIRR;
 
@@ -104,16 +109,17 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
-
                 params.put("qrSUT", SUT);
                 params.put("qrAIRR", AIRR);
 
                 return requestHandler.sendPostRequest(URLs.URL_QRCODE, params);
             }
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
             }
+
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
@@ -125,6 +131,4 @@ public class QRcodeActivity extends AppCompatActivity implements View.OnClickLis
         RegisterCodes rc = new RegisterCodes();
         rc.execute();
     }
-
-
 }

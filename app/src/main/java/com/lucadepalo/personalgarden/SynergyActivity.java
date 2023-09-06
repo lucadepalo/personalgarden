@@ -2,13 +2,10 @@ package com.lucadepalo.personalgarden;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,7 +16,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
+/**
+ * SynergyActivity permette agli utenti di selezionare una specie di pianta da un elenco
+ * e associarla a un determinato vaso nel sistema. L'elenco presenta solo le specie in sinergia
+ * con la specie selezionata nel posto precedente.
+ */
 public class SynergyActivity extends AppCompatActivity {
 
     private HashMap<Integer, String> synCropList = new HashMap<>();
@@ -47,6 +48,10 @@ public class SynergyActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
+    /**
+     * AsyncTask che richiede la lista delle specie di piante consociabili dal server inviando
+     * come parametro la chiave esterna della pianta di cui si vuole trovare la lista di sinergie.
+     */
     class GetSynergyCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
         @Override
         protected HashMap<Integer, String> doInBackground(String... urls) {
@@ -62,19 +67,6 @@ public class SynergyActivity extends AppCompatActivity {
             }
             return result;
         }
-            /*
-            //creating request parameters
-            HashMap<String, String> params = new HashMap<>();
-            //params.put("fk_specie1", fk_specie1);
-
-            try {
-                String json = RequestHandler.sendGetRequest(urls[0]);
-                result = RequestHandler.parseJsonToHashMap(json);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
-        }*/
 
         @Override
         protected void onPostExecute(HashMap<Integer, String> result) {
@@ -88,6 +80,11 @@ public class SynergyActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Popola lo spinner con l'elenco delle specie ricevute dal server.
+     * Questo metodo ordina l'elenco delle specie in ordine alfabetico
+     * e imposta l'elemento selezionato inizialmente come "Seleziona...".
+     */
     private void populateSpinner() {
         Spinner spinner = findViewById(R.id.syn_crop_spinner);
         ArrayList<String> dataList = new ArrayList<>(synCropList.values());
@@ -97,8 +94,6 @@ public class SynergyActivity extends AppCompatActivity {
         CustomSpinnerAdapter adapter = new CustomSpinnerAdapter(this, dataList);
         spinner.setAdapter(adapter);
 
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-        //android.R.layout.simple_spinner_item, dataList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         Button buttonConfirm = findViewById(R.id.button_confirm);
@@ -114,7 +109,6 @@ public class SynergyActivity extends AppCompatActivity {
                 if (position > 0) {
                     String selectedCrop = parent.getItemAtPosition(position).toString();
                     Toast.makeText(SynergyActivity.this, "Hai selezionato: " + selectedCrop, Toast.LENGTH_SHORT).show();
-                    //Intent returnIntent = new Intent();
                     int cropInt = getKeyByValue(synCropList, selectedCrop);
                     isItemSelected = true;
                     buttonConfirm.setEnabled(true);
@@ -146,7 +140,12 @@ public class SynergyActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Restituisce la chiave di una determinata entry in una HashMap data la sua valore.
+     * @param map la HashMap da cercare
+     * @param value il valore dell'entry da cercare
+     * @return la chiave dell'entry, oppure null se il valore non viene trovato
+     */
     public static <T, E> T getKeyByValue(HashMap<T, E> map, E value) {
         for (HashMap.Entry<T, E> entry : map.entrySet()) {
             if (entry.getValue() != null && entry.getValue().equals(value)) {
@@ -156,10 +155,18 @@ public class SynergyActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * Associa una specie di pianta a un vaso nel sistema. Questo metodo
+     * invia una richiesta al server per associare un ID di specie specificato
+     * a un vaso specificato nel sistema.
+     *
+     * @param plantPot il vaso a cui associare la specie
+     * @param fk_specie l'ID della specie da associare
+     */
     private void assegnata(PlantPot plantPot, int fk_specie) {
         final String FK_POSTO = ((Integer) plantPot.getNumPlace()).toString();
         final String FK_SPECIE = ((Integer) fk_specie).toString();
-        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+        class RelazioneAssegnata extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
@@ -181,7 +188,7 @@ public class SynergyActivity extends AppCompatActivity {
                 SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
             }
         }
-        RelazioneDispone rd = new RelazioneDispone();
+        RelazioneAssegnata rd = new RelazioneAssegnata();
         rd.execute();
     }
 }
