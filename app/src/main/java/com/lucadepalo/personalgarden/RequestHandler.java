@@ -62,7 +62,8 @@ public class RequestHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return sb.toString();
+
+        return extractValidJson(sb.toString());
     }
 
     /**
@@ -114,6 +115,25 @@ public class RequestHandler {
         }
 
         return resultMap;
+    }
+
+    /**
+     * Estrae una sottostringa valida in formato JSON da una stringa di input.
+     * Questo metodo è utile quando la risposta del server potrebbe contenere
+     * dati extra al di fuori di una struttura JSON valida.
+     *
+     * @param input La stringa di input contenente potenzialmente un JSON valido.
+     * @return Una sottostringa rappresentante il JSON valido o null se non viene trovato un JSON valido.
+     */
+    public static String extractValidJson(String input) {
+        int startIndex = input.indexOf("{");
+        int endIndex = input.lastIndexOf("}");
+
+        if (startIndex == -1 || endIndex == -1) {
+            return null; // Non abbiamo trovato un JSON valido nella stringa.
+        }
+
+        return input.substring(startIndex, endIndex + 1);
     }
 
 }

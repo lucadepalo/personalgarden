@@ -19,9 +19,6 @@
             android:name=".SynergyActivity"
             android:exported="false" />
         <activity
-            android:name=".SetCropActivity"
-            android:exported="false" />
-        <activity
             android:name=".GridActivity"
             android:exported="false" />
         <activity

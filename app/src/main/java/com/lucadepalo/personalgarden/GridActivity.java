@@ -22,15 +22,41 @@ import java.util.HashMap;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-
+/**
+ * Questa classe rappresenta un'attività a griglia che permette agli utenti di configurare e gestire
+ * il layout del loro giardino. Fornisce funzionalità per aggiungere, rimuovere e riorganizzare le piante
+ * nel giardino, oltre a controllare le impostazioni di irrigazione.
+ */
 public class GridActivity extends AppCompatActivity {
+    /**
+     * Le ImageView che rappresentano rispettivamente l'icona della pianta e del cestino.
+     */
     private ImageView plantIcon, trashIcon;
+    /**
+     * Inizializzazione delle celle della griglia
+     */
     private FrameLayout[] cells = new FrameLayout[8];
+    /**
+     * Inizializzazione delle celle della griglia
+     */
     private int plantNumber = 0;
+    /**
+     * Inizializzazione delle celle della griglia
+     */
     private PlantPot[] pots = new PlantPot[8];
     private static final String PRIORITY_MANUAL = "1", PRIORITY_AUTO ="0", STATE_OPEN = "A", STATE_CLOSED = "C";
+    /**
+     * I bottoni toggle che compongono la bottom bar dell'attività
+     */
     private ToggleButton configToggle, cloudToggle, waterToggle;
 
+    /**
+     * Chiamato all'avvio dell'attività. Questo metodo inizializza il layout a griglia
+     * e imposta gli ascoltatori touch e drag per le icone dei vasi delle piante e dell'icona del cestino.
+     *
+     * @param savedInstanceState Se l'attività viene reinizializzata dopo essere stata precedentemente
+     * chiusa, questo Bundle contiene i dati che ha fornito più di recente.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +165,7 @@ public class GridActivity extends AppCompatActivity {
                         pots[plantNumber].setOnTouchListener(new MyTouchListener());
                         SharedPrefManager.irrigationLine.addPot((Integer) targetView.getTag(), pots[plantNumber]);
                         if (pots[plantNumber].getPotID() == 0) {
-                            startActivity( new Intent(GridActivity.this, SetCropActivity.class));
+                            startActivity( new Intent(GridActivity.this, SynergyActivity.class));
                         } else {
                             startActivity(new Intent(GridActivity.this, SynergyActivity.class).putExtra("potID", plantNumber));
                         }
@@ -311,7 +337,7 @@ public class GridActivity extends AppCompatActivity {
                 if (isOpen) params.put("valore", STATE_OPEN);
                 else params.put("valore", STATE_CLOSED);
 
-                return requestHandler.sendPostRequest(URLs.URL_STATO, params);
+                return requestHandler.sendPostRequest(URLs.URL_GETACTSTATE, params);
             }
             @Override
             protected void onPreExecute() {

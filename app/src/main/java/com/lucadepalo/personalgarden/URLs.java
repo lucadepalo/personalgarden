@@ -37,5 +37,5 @@ public class URLs {
     public static final String URL_ASSEGNATA = ROOT_URL + "assegnata.php";
 
     // URL per impostare lo stato corrente del sistema nell'entità 'STATO'.
-    public static final String URL_STATO = ROOT_URL + "stato.php";
+    public static final String URL_GETACTSTATE = ROOT_URL + "GetActState.php";
 }

@@ -36,29 +36,56 @@ public class SynergyActivity extends AppCompatActivity {
 
         if (getIntent() != null && getIntent().hasExtra("potID")) {
             potID = getIntent().getIntExtra("potID", -1);
+            new GetSynergyCropListTask().execute(URLs.URL_SUGGEST);
+            Spinner spinner = findViewById(R.id.syn_crop_spinner);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_spinner_item, new ArrayList<>(synCropList.values()));
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
         } else {
-            Toast.makeText(getBaseContext(), "ERROR INTENT POT ID", Toast.LENGTH_SHORT);
+            //Toast.makeText(getBaseContext(), "ERROR INTENT POT ID", Toast.LENGTH_SHORT);
+            new GetAllCropListTask().execute(URLs.URL_CROPLIST);
         }
-
-        new GetSynergyCropListTask().execute(URLs.URL_SUGGEST);
-        Spinner spinner = findViewById(R.id.syn_crop_spinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, new ArrayList<>(synCropList.values()));
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
     }
 
     /**
      * AsyncTask che richiede la lista delle specie di piante consociabili dal server inviando
      * come parametro la chiave esterna della pianta di cui si vuole trovare la lista di sinergie.
      */
-    class GetSynergyCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
+    private class GetSynergyCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
         @Override
         protected HashMap<Integer, String> doInBackground(String... urls) {
             HashMap<Integer, String> result = null;
             try {
                 HashMap<String, String> postDataParams = new HashMap<>();
                 postDataParams.put("fk_specie1", String.valueOf(SharedPrefManager.irrigationLine.getPotByID(potID - 1).getCropID()));
+                RequestHandler requestHandler = new RequestHandler();
+                String json = requestHandler.sendPostRequest(urls[0], postDataParams);
+                result = RequestHandler.parseJsonToHashMap(json);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(HashMap<Integer, String> result) {
+            if (result != null && !result.isEmpty()) {
+                synCropList.clear();
+                synCropList.putAll(result);
+                populateSpinner();
+            } else {
+                Toast.makeText(SynergyActivity.this, "Nessuna specie disponibile", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class GetAllCropListTask extends AsyncTask<String, Void, HashMap<Integer, String>> {
+        @Override
+        protected HashMap<Integer, String> doInBackground(String... urls) {
+            HashMap<Integer, String> result = null;
+            try {
+                HashMap<String, String> postDataParams = new HashMap<>();
                 RequestHandler requestHandler = new RequestHandler();
                 String json = requestHandler.sendPostRequest(urls[0], postDataParams);
                 result = RequestHandler.parseJsonToHashMap(json);
@@ -185,7 +212,8 @@ public class SynergyActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
+                //SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
+                SharedPrefManager.getInstance(getApplicationContext()).setCropInPot(plantPot);
             }
         }
         RelazioneAssegnata rd = new RelazioneAssegnata();
