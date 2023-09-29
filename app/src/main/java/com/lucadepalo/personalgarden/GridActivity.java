@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.HashMap;
@@ -195,44 +196,19 @@ public class GridActivity extends AppCompatActivity {
             return true;
         }
     }
-    private void irriga(){
-        final String FK_CONTENITORE = ((Integer)SharedPrefManager.container.getNumContainer()).toString();
-        final String FK_LINEA = ((Integer) SharedPrefManager.irrigationLine.getNumLine()).toString();
-        class RelazioneIrriga extends AsyncTask<Void, Void, String> {
-            @Override
-            protected String doInBackground(Void... voids) {
-                RequestHandler requestHandler = new RequestHandler();
-                HashMap<String, String> params = new HashMap<>();
-                params.put("fk_contenitore", FK_CONTENITORE);
-                params.put("fk_linea", FK_LINEA);
-                return requestHandler.sendPostRequest(URLs.URL_IRRIGA, params);
-            }
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                SharedPrefManager.container.addIrrigationLine(SharedPrefManager.irrigationLine);
-                SharedPrefManager.getInstance(getApplicationContext()).setLineInContainer(SharedPrefManager.container, SharedPrefManager.irrigationLine);
-            }
-        }
-        RelazioneIrriga ri = new RelazioneIrriga();
-        ri.execute();
-    }
 
-    private void dispone(PlantPot plantPot){
+    private void posto(@NonNull PlantPot plantPot){
         final String FK_LINEA = ((Integer) SharedPrefManager.irrigationLine.getNumLine()).toString();
-        final String FK_POSTO = ((Integer)plantPot.getNumPlace()).toString();
-        class RelazioneDispone extends AsyncTask<Void, Void, String> {
+        final String PK_POSTO = ((Integer)plantPot.getNumPlace()).toString();
+        class Posto extends AsyncTask<Void, Void, String> {
             @Override
             protected String doInBackground(Void... voids) {
                 RequestHandler requestHandler = new RequestHandler();
                 HashMap<String, String> params = new HashMap<>();
+                params.put("pk_posto", PK_POSTO);
+                params.put("numForo", PK_POSTO); //non è un errore rimettere la pk del posto, è che corrispondono i fori ai posti
                 params.put("fk_linea", FK_LINEA);
-                params.put("fk_posto", FK_POSTO);
-                return requestHandler.sendPostRequest(URLs.URL_DISPONE, params);
+                return requestHandler.sendPostRequest(URLs.URL_POSTO, params);
             }
             @Override
             protected void onPreExecute() {
@@ -244,8 +220,8 @@ public class GridActivity extends AppCompatActivity {
                 SharedPrefManager.getInstance(getApplicationContext()).setPotInLine(SharedPrefManager.irrigationLine, plantPot);
             }
         }
-        RelazioneDispone rd = new RelazioneDispone();
-        rd.execute();
+        Posto p = new Posto();
+        p.execute();
     }
 
     private class ToggleButtonListener implements CompoundButton.OnCheckedChangeListener {
@@ -255,11 +231,10 @@ public class GridActivity extends AppCompatActivity {
                 switch (buttonView.getId()) {
                     case R.id.configToggle:
                         for(int i = 0; i<pots.length; i++) {
-                            dispone(pots[i]);
-                            plantIcon.setVisibility(View.INVISIBLE);
-                            trashIcon.setVisibility(View.INVISIBLE);
+                            posto(pots[i]);
                         }
-                        irriga();
+                        plantIcon.setVisibility(View.INVISIBLE);
+                        trashIcon.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.cloudToggle:
                         setIrrigationControl(false, false);

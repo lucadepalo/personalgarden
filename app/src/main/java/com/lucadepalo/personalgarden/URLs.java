@@ -27,11 +27,8 @@ public class URLs {
     // URL per ottenere l'elenco delle colture sinergiche dalla relazione 'sinergia' in base a quella selezionata.
     public static final String URL_SUGGEST = ROOT_URL + "suggest.php";
 
-    // URL per memorizzare la linea nel contenitore nella relazione 'irriga'.
-    public static final String URL_IRRIGA = ROOT_URL + "irriga.php";
-
-    // URL per memorizzare i posti nella linea nella relazione 'dispone'.
-    public static final String URL_DISPONE = ROOT_URL + "dispone.php";
+    // URL per memorizzare i posti nella linea di irrigazione.
+    public static final String URL_POSTO = ROOT_URL + "posto.php";
 
     // URL per memorizzare le specie nei posti nella relazione 'assegnata'.
     public static final String URL_ASSEGNATA = ROOT_URL + "assegnata.php";
